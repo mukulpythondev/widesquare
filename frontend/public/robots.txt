@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: 
+
+# Prevent access to sensitive routes
+Disallow: /reset/
+Disallow: /forgot-password/
