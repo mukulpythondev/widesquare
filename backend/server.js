@@ -49,9 +49,7 @@ app.use(cors({
     'http://localhost:5174',
     'http://localhost:5173',
     'http://localhost:5175',
-    'https://buildestate.vercel.app',
-    'https://real-estate-website-admin.onrender.com',
-    'https://real-estate-website-backend-zfu7.onrender.com',
+    'https://widesquare.in'
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'], // Added HEAD
