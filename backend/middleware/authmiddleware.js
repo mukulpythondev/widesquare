@@ -33,7 +33,7 @@ export const protect = async (req, res, next) => {
     }
 
     req.user = user;
-    req.isAdmin = getAdminEmails().includes(user.email); // Set admin flag
+    req.isAdmin = user.role === "admin"; // <-- Check role, not email
     next();
   } catch (error) {
     console.error("Auth error:", error);

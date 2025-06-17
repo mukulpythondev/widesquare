@@ -4,8 +4,6 @@ import Appointment from "../models/appointmentModel.js";
 import User from "../models/Usermodel.js";
 import transporter from "../config/nodemailer.js";
 import { getEmailTemplate } from "../email.js";
-import servicemodel from "../models/serviceModel.js";
-import ServiceEnquiry from "../models/serviceEnqueryModel.js";
 
 const formatRecentProperties = (properties) => {
   return properties.map((property) => ({

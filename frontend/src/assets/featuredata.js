@@ -1,24 +1,24 @@
-import { MessageSquare, Shield, Home, Users } from 'lucide-react';
+import { Gavel, Ruler, Paintbrush, MessageSquare } from 'lucide-react';
 
 export const features = [
   {
+    icon: Gavel,
+    title: 'Legal Support & Valuation',
+    description: 'Connect with legal experts for property validation, documentation, and valuation support.',
+  },
+  {
+    icon: Ruler,
+    title: 'Vastu Consultation',
+    description: 'Get guidance from certified Vastu consultants to ensure your property brings positive energy.',
+  },
+  {
+    icon: Paintbrush,
+    title: 'Interior Design Services',
+    description: 'Transform your space with our curated interior designers to reflect your style and comfort.',
+  },
+  {
     icon: MessageSquare,
-    title: 'Direct Communication',
-    description: 'Get instant responses from our experienced agents through our real-time chat system.',
-  },
-  {
-    icon: Shield,
-    title: 'Verified Properties',
-    description: 'Every property is thoroughly inspected and verified to ensure quality and authenticity.',
-  },
-  {
-    icon: Home,
-    title: 'Quality First',
-    description: 'We maintain high standards for all properties, ensuring you get the best value.',
-  },
-  {
-    icon: Users,
-    title: 'Family Focused',
-    description: 'Find homes that perfectly match your family needs and lifestyle preferences.',
+    title: 'Loan Support',
+    description: 'Get expert assistance in securing home loans with the best interest rates from trusted financial institutions',
   },
 ];

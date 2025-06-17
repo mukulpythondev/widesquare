@@ -1,4 +1,4 @@
-// import firecrawlService from '../services/firecrawlService.js';
+import firecrawlService from '../services/firecrawlService.js';
 import aiService from '../services/aiService.js';
 
 export const searchProperties = async (req, res) => {

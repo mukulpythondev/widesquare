@@ -184,7 +184,7 @@ const Footer = () => {
             </div>
             
             <p className="text-gray-600 mt-4 text-center lg:text-left lg:mt-6 max-w-md mx-auto lg:mx-0 leading-relaxed">
-              Your trusted partner in finding the perfect home. We make property hunting simple, efficient, and tailored to your unique needs.
+              Your trusted partner in finding the perfect property. We make property hunting simple, efficient, and tailored to your unique needs.
             </p>
             
             <div className="flex justify-center lg:justify-start">
@@ -292,7 +292,7 @@ const Footer = () => {
       <div className="bg-gray-100 border-t border-gray-200 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-600 mb-4 md:mb-0 text-center md:text-left">
-            © {new Date().getFullYear()} Widesquare. All Rights Reserved.
+            © {new Date().getFullYear()} Widesquare properties consultancy Pvt. Ltd. All Rights Reserved.
           </p>
           
           <motion.a

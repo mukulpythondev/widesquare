@@ -29,7 +29,7 @@ export const Calculator = () => {
             />
             <FieldInput
               value={value.tenure}
-              label="Loan Tenure"
+              label="Loan Tenure (Per Annum)"
               maxNumber={35}
               onChange={onChange("tenure")}
             />

@@ -120,7 +120,7 @@ const Testimonials = () => {
           <h2 className="text-4xl font-bold text-gray-900 mt-2 mb-4">What Our Clients Say</h2>
           <div className="w-24 h-1 bg-blue-600 mx-auto mb-6 rounded-full"></div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Discover why homeowners trust Widesquare to find their perfect property
+            Discover why Buyers trust Widesquare to find their perfect property
           </p>
         </motion.div>
 

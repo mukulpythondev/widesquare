@@ -101,18 +101,33 @@ export const ChartTooltipContent = React.forwardRef(function ChartTooltipContent
 });
 
 export const ChartLegendContent = React.forwardRef(function ChartLegendContent(
-  { payload, className },
+  { payload, className, legendData },
   ref
 ) {
   if (!payload?.length) return null;
+
+  // Calculate total from legendData or payload
+  const total = legendData
+    ? legendData.reduce((sum, item) => sum + (item.value || 0), 0)
+    : payload.reduce((sum, item) => sum + (item.payload?.value || 0), 0);
+
   return (
     <div ref={ref} className={cn("flex items-center justify-center gap-4 pt-3", className)}>
-      {payload.map((item) => (
-        <div key={item.value} className="flex items-center gap-1.5">
-          <div className="h-2 w-2 shrink-0 rounded-[2px]" style={{ backgroundColor: item.color }} />
-          {item.value}
-        </div>
-      ))}
+      {payload.map((item) => {
+        const name = item.payload?.name || item.name;
+        const value = legendData
+          ? legendData.find(d => d.name === name)?.value
+          : item.payload?.value;
+        const percent = total ? ((value / total) * 100).toFixed(1) : 0;
+        return (
+          <div key={name} className="flex items-center gap-1.5">
+            <div className="h-2 w-2 shrink-0 rounded-[2px]" style={{ backgroundColor: item.color }} />
+            <span>{name}</span>
+            <span className="font-mono">{value?.toLocaleString()}</span>
+            <span className="text-xs text-gray-500">({percent}%)</span>
+          </div>
+        );
+      })}
     </div>
   );
 });

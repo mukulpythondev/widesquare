@@ -56,7 +56,7 @@ export default function Hero() {
           Get in Touch With Us
         </h1>
         <p className="text-lg md:text-xl leading-relaxed font-light">
-          Have questions about our properties? Need assistance with finding your perfect home?
+          Have questions about our properties? Need assistance with finding your perfect Property?
           Our team is here to help you every step of the way.
         </p>
         

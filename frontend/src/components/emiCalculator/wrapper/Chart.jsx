@@ -36,9 +36,9 @@ export const Chart = ({ data }) => (
           innerRadius={70}
           outerRadius={110}
           strokeWidth={2}
-          label={({ name, percent }) =>
-            `${name}: ${(percent * 100).toFixed(1)}%`
-          }
+          // label={({ name, percent }) =>
+          //   `${name}: ${(percent * 100).toFixed(1)}%`
+          // }
           labelLine={false}
         >
           {data.map((entry, index) => (

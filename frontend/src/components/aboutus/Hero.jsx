@@ -64,7 +64,7 @@ export default function Hero() {
           className="relative text-center text-white px-4 max-w-4xl mx-auto z-10"
         >
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-8 leading-tight">
-            Building Your Future,<br />One Home at a Time
+            Unlocking Potential in<br />Every Square Foot.
           </h1>
           <p className="text-xl md:text-2xl leading-relaxed font-light">
             We're more than just a property platform - we're your partner in finding the perfect place to call home.

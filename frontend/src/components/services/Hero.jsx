@@ -65,7 +65,7 @@ const Hero = () => {
             Our Services,<br />Your Comfort
           </h1>
           <p className="text-xl md:text-2xl leading-relaxed font-light">
-            Discover a range of home and property services designed to make your life easier and your experience seamless.
+            Discover a range of property services designed to make your life easier and your experience seamless.
           </p>
           {/* Decorative line */}
           <motion.div 

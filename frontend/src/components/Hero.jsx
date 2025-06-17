@@ -97,12 +97,12 @@ const Hero = () => {
                 >
                   Find Your Perfect
                   <br />
-                  <span className="text-gray-800">Living Space</span>
+                  <span className="text-gray-800">Property Space</span>
                 </RadialGradient>
               </h1>
 
               <p className="text-slate-700 text-lg sm:text-xl mb-8 max-w-2xl mx-auto">
-                Discover your dream home in the most sought-after locations
+                Discover your dream property in the most sought-after locations
               </p>
             </motion.div>
 

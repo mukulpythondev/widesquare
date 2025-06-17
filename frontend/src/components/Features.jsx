@@ -45,7 +45,7 @@ const Features = () => {
           <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 mx-auto mb-6 rounded-full"></div>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             We're committed to providing exceptional service and finding the
-            perfect home for you with our innovative approach
+            perfect property for you with our innovative approach
           </p>
         </motion.div>
 
@@ -80,7 +80,7 @@ const Features = () => {
               </p>
               
               <motion.a 
-                href="#" 
+                href="/services" 
                 className="inline-flex items-center text-blue-600 text-sm font-medium hover:text-blue-800 transition-colors"
                 whileHover={{ x: 5 }}
               >
@@ -99,12 +99,12 @@ const Features = () => {
           className="flex justify-center mt-16"
         >
           <motion.a
-            href="/properties"
+            href="/services"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all shadow-blue-500/30 flex items-center"
           >
-            Browse Our Properties
+            Browse Our Services
             <ArrowRight className="ml-2 h-5 w-5" />
           </motion.a>
         </motion.div>

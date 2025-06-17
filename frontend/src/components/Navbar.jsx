@@ -13,7 +13,7 @@ import {
   UserRound,
   Calculator,
 } from "lucide-react";
-import logo from "../assets/home-regular-24.png";
+import logo from "../assets/widesquareLogo.jpeg";
 import { useAuth } from "../context/AuthContext";
 import PropTypes from "prop-types";
 
@@ -91,13 +91,13 @@ const Navbar = () => {
             <motion.div
               whileHover={{ rotate: [0, -10, 10, -10, 0] }}
               transition={{ duration: 0.5 }}
-              className="p-2 rounded-lg"
+              className="rounded-lg w-34 h-12 bg-red-300"
             >
-              <img src={logo} alt="Widesquare logo" className="w-6 h-6" />
+              <img src={logo} alt="Widesquare logo" className="w-full h-full object-cover" />
             </motion.div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent group-hover:from-indigo-600 group-hover:to-blue-600 transition-all duration-300">
+            {/* <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent group-hover:from-indigo-600 group-hover:to-blue-600 transition-all duration-300">
               Widesquare
-            </span>
+            </span> */}
           </Link>
 
           {/* Desktop Navigation */}
@@ -293,8 +293,8 @@ const NavLinks = ({ currentPath, user }) => {
   const navLinks = [
     { name: "Home", path: "/", icon: Home },
     { name: "Properties", path: "/properties", icon: Search },
-    { name: "About Us", path: "/about", icon: Users },
-    { name: "Contact", path: "/contact", icon: MessageCircle },
+    // { name: "About Us", path: "/about", icon: Users },
+    // { name: "Contact", path: "/contact", icon: MessageCircle },
     { name: "EMI Calculator", path: "/emi-calculator", icon: Calculator },
     { name: "Services", path: "/services", icon: Users },
   ];
@@ -317,9 +317,9 @@ const NavLinks = ({ currentPath, user }) => {
           path === "/" ? currentPath === path : currentPath.startsWith(path);
 
         return (
-          <Link
+          <a
             key={name}
-            to={path}
+            href={path}
             className={`relative font-medium transition-colors duration-200 flex items-center gap-1.5 px-2 py-1 rounded-md
               ${isActive
                 ? "text-blue-600 bg-blue-50"
@@ -336,7 +336,7 @@ const NavLinks = ({ currentPath, user }) => {
                 initial={false}
               />
             )}
-          </Link>
+          </a>
         );
       })}
     </div>
@@ -362,6 +362,8 @@ const MobileNavLinks = ({
   const showOpportunitiesDropdown = !user || (user.role !== "admin" && user.role !== "agent" && user.role !== "seller");
 
   const showAgentPanel = user && user.role === "agent";
+  const showAdminPanel = user && user.role === "admin";
+  const showSellerPanel = user && user.role === "seller";
 
   return (
     <div className="flex flex-col space-y-1 pb-3">
@@ -376,8 +378,8 @@ const MobileNavLinks = ({
 
         return (
           <motion.div key={name} whileTap={{ scale: 0.97 }}>
-            <Link
-              to={path}
+            <a
+              href={path}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
                 ${isActive
                   ? "bg-blue-50 text-blue-600 font-medium"
@@ -388,7 +390,7 @@ const MobileNavLinks = ({
             >
               <Icon className="w-5 h-5" />
               {name}
-            </Link>
+            </a>
           </motion.div>
         );
       })}
@@ -430,6 +432,26 @@ const MobileNavLinks = ({
         </div>
       )}
 
+      {/* Admin Panel for Admins */}
+      {showAdminPanel && (
+        <motion.div whileTap={{ scale: 0.97 }}>
+          <Link
+            to="/admin"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
+              ${currentPath.startsWith("/admin")
+                ? "bg-blue-50 text-blue-600 font-medium"
+                : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+              }
+            `}
+          >
+            <UserRound className="w-5 h-5" />
+            Admin Panel
+          </Link>
+        </motion.div>
+      )}
+
+      {/* Agent Panel for Agents */}
       {showAgentPanel && (
         <motion.div whileTap={{ scale: 0.97 }}>
           <Link
@@ -444,6 +466,25 @@ const MobileNavLinks = ({
           >
             <UserRound className="w-5 h-5" />
             Agent Panel
+          </Link>
+        </motion.div>
+      )}
+
+      {/* Seller Panel for Sellers */}
+      {showSellerPanel && (
+        <motion.div whileTap={{ scale: 0.97 }}>
+          <Link
+            to="/seller-panel"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
+              ${currentPath.startsWith("/seller-panel")
+                ? "bg-blue-50 text-blue-600 font-medium"
+                : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+              }
+            `}
+          >
+            <UserRound className="w-5 h-5" />
+            Seller Panel
           </Link>
         </motion.div>
       )}

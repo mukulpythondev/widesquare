@@ -158,7 +158,7 @@ const PropertiesPage = () => {
           </h3>
           
           <p className="text-gray-600 mb-5 max-w-xs text-center">
-            {`We're finding the perfect homes that match your preferences...`}
+            {`We're finding the perfect properties that match your preferences...`}
           </p>
           
           {/* Progress bar with animated gradient */}

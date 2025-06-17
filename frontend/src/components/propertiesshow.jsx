@@ -193,7 +193,7 @@ const PropertiesShow = () => {
     { id: 'all', label: 'All Properties' },
     { id: 'apartment', label: 'Apartments' },
     { id: 'villa', label: 'Villas' },
-    { id: 'house', label: 'Houses' },
+    { id: 'plot', label: 'Plots' },
     { id: 'Office', label: 'Office' },
     { id: 'Shop', label: 'Shops' },
     { id: 'Commercial Space', label: 'Commercial' },
@@ -309,7 +309,7 @@ const PropertiesShow = () => {
           </h2>
           <div className="w-24 h-1 bg-blue-600 mx-auto mb-6"></div>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Discover our handpicked selection of premium properties designed to match your lifestyle needs
+            Discover our handpicked selection of premium properties designed to match your perfect needs
           </p>
         </motion.div>
 

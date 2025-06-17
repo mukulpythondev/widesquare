@@ -10,6 +10,7 @@ const Services = () => {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ title: "", description: "", image: null });
   const [loading, setLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false); // <-- for add/update UI
 
   const fetchServices = async () => {
     setLoading(true);
@@ -34,7 +35,7 @@ const Services = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setActionLoading(true); // <-- show loading for add/update
     try {
       const formData = new FormData();
       formData.append("title", form.title);
@@ -63,7 +64,7 @@ const Services = () => {
     } catch {
       toast.error("Failed to save service");
     }
-    setLoading(false);
+    setActionLoading(false); // <-- hide loading
   };
 
   const handleEdit = (service) => {
@@ -110,6 +111,7 @@ const Services = () => {
                 onChange={handleFormChange}
                 required
                 className="w-full border rounded px-3 py-2"
+                disabled={actionLoading}
               />
             </div>
             <div>
@@ -120,17 +122,34 @@ const Services = () => {
                 onChange={handleFormChange}
                 required
                 className="w-full border rounded px-3 py-2"
+                disabled={actionLoading}
               />
             </div>
             <div>
               <label className="block font-medium mb-1">Image</label>
-              <input type="file" name="image" accept="image/*" onChange={handleFormChange} />
+              <input type="file" name="image" accept="image/*" onChange={handleFormChange} disabled={actionLoading} />
             </div>
             <div className="flex gap-2">
-              <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded" disabled={loading}>
-                {editing ? "Update" : "Add"}
+              <button
+                type="submit"
+                className="bg-blue-600 text-white px-4 py-2 rounded flex items-center justify-center min-w-[100px]"
+                disabled={actionLoading}
+              >
+                {actionLoading ? (
+                  <>
+                    <Loader className="animate-spin w-4 h-4 mr-2" />
+                    {editing ? "Updating..." : "Adding..."}
+                  </>
+                ) : (
+                  editing ? "Update" : "Add"
+                )}
               </button>
-              <button type="button" className="bg-gray-300 px-4 py-2 rounded" onClick={() => setShowForm(false)}>
+              <button
+                type="button"
+                className="bg-gray-300 px-4 py-2 rounded"
+                onClick={() => setShowForm(false)}
+                disabled={actionLoading}
+              >
                 Cancel
               </button>
             </div>
@@ -153,10 +172,10 @@ const Services = () => {
                 <div className="text-gray-600 mb-2">{service.description}</div>
                 <div className="flex-1"></div>
                 <div className="flex gap-2 mt-3">
-                  <button className="text-blue-600" onClick={() => handleEdit(service)}>
+                  <button className="text-blue-600" onClick={() => handleEdit(service)} disabled={actionLoading}>
                     <Edit3 />
                   </button>
-                  <button className="text-red-600" onClick={() => handleDelete(service._id)}>
+                  <button className="text-red-600" onClick={() => handleDelete(service._id)} disabled={actionLoading}>
                     <Trash2 />
                   </button>
                 </div>

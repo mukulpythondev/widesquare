@@ -12,6 +12,7 @@ import { isAdmin, protect } from "../middleware/authmiddleware.js";
 
 const upload = multer({ dest: "uploads/services/" });
 const router = express.Router();
+
 // Admin routes
 router.post("/add", protect, isAdmin, upload.single("image"), addService);
 router.post("/update", protect, isAdmin, upload.single("image"), updateService);
