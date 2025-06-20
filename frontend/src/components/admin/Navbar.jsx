@@ -49,7 +49,7 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link to="/admin/dashboard" className="flex items-center">
+            <Link to="/" className="flex items-center">
               <div className="p-2 bg-blue-100 rounded-lg">
                 <Home className="h-5 w-5 text-blue-600" />
               </div>

@@ -106,7 +106,7 @@ const PropertyCard = ({ property, viewType }) => {
               onClick={(e) => handleImageNavigation(e, 'prev')}
               className="p-1 rounded-full bg-white/80 backdrop-blur-sm"
             >
-              <ChevronLeft className="w-5 h-5 text-gray-800" />
+              <ChevronLeft className="w-5 h-5 text-black" />
             </motion.button>
             <motion.button
               initial={{ opacity: 0 }}
@@ -115,7 +115,7 @@ const PropertyCard = ({ property, viewType }) => {
               onClick={(e) => handleImageNavigation(e, 'next')}
               className="p-1 rounded-full bg-white/80 backdrop-blur-sm"
             >
-              <ChevronRight className="w-5 h-5 text-gray-800" />
+              <ChevronRight className="w-5 h-5 text-black" />
             </motion.button>
           </div>
         )}
@@ -127,7 +127,7 @@ const PropertyCard = ({ property, viewType }) => {
               <div
                 key={index}
                 className={`w-1.5 h-1.5 rounded-full transition-all duration-300
-                  ${index === currentImageIndex ? 'bg-white w-3' : 'bg-white/60'}`}
+                  ${index === currentImageIndex ? 'bg-black w-3' : 'bg-black/30'}`}
               />
             ))}
           </div>
@@ -138,10 +138,10 @@ const PropertyCard = ({ property, viewType }) => {
           <motion.button
             whileHover={{ scale: 1.1 }}
             onClick={handleShare}
-            className="p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-blue-50 
+            className="p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-gray-100 
               transition-colors shadow-lg"
           >
-            <Share2 className="w-4 h-4 text-gray-700" />
+            <Share2 className="w-4 h-4 text-black" />
           </motion.button>
         </div>
 
@@ -150,16 +150,14 @@ const PropertyCard = ({ property, viewType }) => {
           <motion.span 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-gradient-to-r from-blue-600 to-blue-500 text-white 
-              px-3 py-1 rounded-full text-sm font-medium shadow-lg"
+            className="bg-black text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg"
           >
             {property.type}
           </motion.span>
           <motion.span 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-gradient-to-r from-green-600 to-green-500 text-white 
-              px-3 py-1 rounded-full text-sm font-medium shadow-lg"
+            className="bg-black text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg"
           >
             {property.availability}
           </motion.span>
@@ -170,52 +168,51 @@ const PropertyCard = ({ property, viewType }) => {
       <div className={`flex-1 p-6 ${isGrid ? '' : 'flex flex-col justify-between'}`}>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center text-gray-500 text-sm">
-              <MapPin className="w-4 h-4 mr-2 text-blue-500" />
+            <div className="flex items-center text-black text-sm">
+              <MapPin className="w-4 h-4 mr-2 text-black" />
               {property.location}
             </div>
-            <div className="flex items-center gap-1 text-gray-500 text-sm">
-              <Eye className="w-4 h-4" />
+            <div className="flex items-center gap-1 text-black text-sm">
+              <Eye className="w-4 h-4 text-black" />
               <span>{Math.floor(Math.random() * 100) + 20}</span>
             </div>
           </div>
 
-          <h3 className="text-xl font-semibold text-gray-900 line-clamp-2 
-            group-hover:text-blue-600 transition-colors">
+          <h3 className="text-xl font-semibold text-black line-clamp-2 
+            group-hover:text-black transition-colors">
             {property.title}
           </h3>
 
           <div className="flex items-center gap-2">
             <div className="flex-1">
-              <p className="text-sm text-gray-500 mb-1">Price</p>
+              <p className="text-sm text-black mb-1">Price</p>
               <div className="flex items-center gap-1">
-                <IndianRupee className="w-5 h-5 text-blue-600" />
-                <span className="text-2xl font-bold text-blue-600">
+                <IndianRupee className="w-5 h-5 text-black" />
+                <span className="text-2xl font-bold text-black">
                   {Number(property.price).toLocaleString('en-IN')}
                 </span>
               </div>
             </div>
-            {/* Rest of your price-related content */}
           </div>
         </div>
 
         {/* Property Features */}
         <div className="grid grid-cols-3 gap-3 mt-6">
-          <div className="flex flex-col items-center gap-1 bg-blue-50 p-2 rounded-lg">
-            <BedDouble className="w-5 h-5 text-blue-600" />
-            <span className="text-sm font-medium text-gray-600">
+          <div className="flex flex-col items-center gap-1 bg-gray-100 p-2 rounded-lg">
+            <BedDouble className="w-5 h-5 text-black" />
+            <span className="text-sm font-medium text-black">
               {property.beds} {property.beds > 1 ? 'Beds' : 'Bed'}
             </span>
           </div>
-          <div className="flex flex-col items-center gap-1 bg-blue-50 p-2 rounded-lg">
-            <Bath className="w-5 h-5 text-blue-600" />
-            <span className="text-sm font-medium text-gray-600">
+          <div className="flex flex-col items-center gap-1 bg-gray-100 p-2 rounded-lg">
+            <Bath className="w-5 h-5 text-black" />
+            <span className="text-sm font-medium text-black">
               {property.baths} {property.baths > 1 ? 'Baths' : 'Bath'}
             </span>
           </div>
-          <div className="flex flex-col items-center gap-1 bg-blue-50 p-2 rounded-lg">
-            <Maximize className="w-5 h-5 text-blue-600" />
-            <span className="text-sm font-medium text-gray-600">
+          <div className="flex flex-col items-center gap-1 bg-gray-100 p-2 rounded-lg">
+            <Maximize className="w-5 h-5 text-black" />
+            <span className="text-sm font-medium text-black">
               {property.sqft} sqft
             </span>
           </div>
@@ -224,12 +221,12 @@ const PropertyCard = ({ property, viewType }) => {
         {/* Amenities */}
         {amenities && amenities.length > 0 && (
           <div className="mt-4">
-            <p className="text-xs text-gray-500 mb-1 font-medium">Amenities:</p>
+            <p className="text-xs text-black mb-1 font-medium">Amenities:</p>
             <div className="flex flex-wrap gap-2">
               {amenities.map((amenity, idx) => (
                 <span
                   key={idx}
-                  className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-xs"
+                  className="bg-gray-200 text-black px-2 py-1 rounded text-xs"
                 >
                   {amenity}
                 </span>

@@ -48,12 +48,12 @@ const FilterSection = ({ filters, setFilters, onApplyFilters }) => {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center space-x-2">
-          <Filter className="w-5 h-5 text-blue-600" />
-          <h2 className="text-lg font-semibold">Filters</h2>
+          <Filter className="w-5 h-5 text-black" />
+          <h2 className="text-lg font-semibold text-black">Filters</h2>
         </div>
         <button
           onClick={handleReset}
-          className="text-sm text-blue-600 hover:text-blue-700"
+          className="text-sm text-black hover:underline"
         >
           Reset All
         </button>
@@ -62,8 +62,8 @@ const FilterSection = ({ filters, setFilters, onApplyFilters }) => {
       <div className="space-y-6">
         {/* Property Type */}
         <div className="filter-group">
-          <label className="filter-label">
-            <Home className="w-4 h-4 mr-2" />
+          <label className="filter-label flex items-center text-black font-medium mb-2">
+            <Home className="w-4 h-4 mr-2 text-black" />
             Property Type
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -75,8 +75,8 @@ const FilterSection = ({ filters, setFilters, onApplyFilters }) => {
                 })}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all
                   ${filters.propertyType === type.toLowerCase()
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+                    ? "bg-black text-white"
+                    : "bg-gray-100 text-black hover:bg-gray-200"}`}
               >
                 {type}
               </button>
@@ -86,8 +86,8 @@ const FilterSection = ({ filters, setFilters, onApplyFilters }) => {
 
         {/* Price Range */}
         <div className="filter-group">
-          <label className="filter-label">
-            <IndianRupee className="w-4 h-4 mr-2" />
+          <label className="filter-label flex items-center text-black font-medium mb-2">
+            <IndianRupee className="w-4 h-4 mr-2 text-black" />
             Price Range
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -97,8 +97,8 @@ const FilterSection = ({ filters, setFilters, onApplyFilters }) => {
                 onClick={() => handlePriceRangeChange(min, max)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all
                   ${filters.priceRange[0] === min && filters.priceRange[1] === max
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+                    ? "bg-black text-white"
+                    : "bg-gray-100 text-black hover:bg-gray-200"}`}
               >
                 {label}
               </button>
@@ -106,13 +106,71 @@ const FilterSection = ({ filters, setFilters, onApplyFilters }) => {
           </div>
         </div>
 
-        {/* Rest of your existing filter groups */}
-        {/* ... */}
+        {/* Example: Bedrooms */}
+        <div className="filter-group">
+          <label className="filter-label text-black font-medium mb-2">
+            Bedrooms
+          </label>
+          <select
+            name="bedrooms"
+            value={filters.bedrooms}
+            onChange={handleChange}
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-black"
+          >
+            <option value="0">Any</option>
+            <option value="1">1+</option>
+            <option value="2">2+</option>
+            <option value="3">3+</option>
+            <option value="4">4+</option>
+          </select>
+        </div>
+
+        {/* Example: Bathrooms */}
+        <div className="filter-group">
+          <label className="filter-label text-black font-medium mb-2">
+            Bathrooms
+          </label>
+          <select
+            name="bathrooms"
+            value={filters.bathrooms}
+            onChange={handleChange}
+            className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-black"
+          >
+            <option value="0">Any</option>
+            <option value="1">1+</option>
+            <option value="2">2+</option>
+            <option value="3">3+</option>
+            <option value="4">4+</option>
+          </select>
+        </div>
+
+        {/* Example: Availability */}
+        <div className="filter-group">
+          <label className="filter-label text-black font-medium mb-2">
+            Availability
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            {availabilityTypes.map((type) => (
+              <button
+                key={type}
+                onClick={() => handleChange({
+                  target: { name: "availability", value: type.toLowerCase() }
+                })}
+                className={`px-2 py-2 rounded-lg text-sm font-medium transition-all
+                  ${filters.availability === type.toLowerCase()
+                    ? "bg-black text-white"
+                    : "bg-gray-100 text-black hover:bg-gray-200"}`}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div className="flex space-x-4 mt-8">
           <button
             onClick={() => onApplyFilters(filters)}
-            className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 
+            className="flex-1 bg-black text-white py-3 rounded-lg hover:bg-gray-900 
               transition-colors font-medium"
           >
             Apply Filters

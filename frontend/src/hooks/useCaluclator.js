@@ -3,9 +3,9 @@ import { calculateLoanDetails } from "../lib/utils";
 
 export const useCalculator = () => {
   const [value, setValue] = useState({
-    amount: 0,
-    roi: 0,
-    tenure: 0,
+    amount: '',
+    roi: '',
+    tenure: '',
   });
 
   const handleChange = (field) => (val) => {

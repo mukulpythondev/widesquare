@@ -8,15 +8,22 @@ export const FieldInput = ({
   value,
   step = 1,
   onChange,
+  placeholder = "",
 }) => {
-  const handleInputChange = (event) => {
-    const { value } = event.target;
-    onChange(value ? parseInt(value, 10) : 0);
+  // Handle text input change
+  const handleInputChange = (e) => {
+    const val = e.target.value;
+    // Allow empty, integers, or decimals
+    if (val === "" || /^\d*\.?\d*$/.test(val)) {
+      onChange(val);
+    }
   };
 
+  // Handle slider change
   const handleSliderChange = useCallback(
-    (value) => {
-      onChange(value[0]);
+    (sliderValue) => {
+      // Always convert slider value to string for consistency
+      onChange(String(sliderValue[0]));
     },
     [onChange]
   );
@@ -26,14 +33,17 @@ export const FieldInput = ({
       <div className="flex flex-wrap items-center justify-between mb-5">
         <p>{label}</p>
         <Input
-          type="number"
+          type="text"
           className="w-80"
           value={value}
           onChange={handleInputChange}
+          placeholder={placeholder}
+          inputMode="decimal"
+          autoComplete="off"
         />
       </div>
       <Slider
-        value={[value]}
+        value={[value === "" ? 0 : Number(value)]}
         max={maxNumber}
         step={step}
         min={0}

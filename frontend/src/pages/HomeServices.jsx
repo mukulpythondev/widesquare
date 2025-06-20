@@ -67,7 +67,7 @@ const HomeServices = () => {
                                 <h2 className="text-lg font-bold mb-1">{service.title}</h2>
                                 <div className="text-gray-600 mb-2">{service.description}</div>
                                 <button
-                                    className="mt-auto bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                                    className="mt-auto bg-zinc-900 text-white px-4 py-2 rounded hover:bg-zinc-800"
                                     onClick={() => handleEnquire(service)}
                                 >
                                     Enquire
@@ -126,7 +126,7 @@ const HomeServices = () => {
                                     <div className="flex gap-2">
                                         <button
                                             type="submit"
-                                            className="bg-blue-600 text-white px-4 py-2 rounded flex items-center justify-center min-w-[120px]"
+                                            className="bg-zinc-900 text-white px-4 py-2 rounded flex items-center justify-center min-w-[120px]"
                                             disabled={loading}
                                         >
                                             {loading ? (
