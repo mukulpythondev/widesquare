@@ -19,6 +19,7 @@ export const Calculator = () => {
               label="Loan Amount"
               maxNumber={100000000}
               onChange={onChange("amount")}
+              placeholder="Enter amount"
             />
             <FieldInput
               value={value.roi}
@@ -26,12 +27,14 @@ export const Calculator = () => {
               maxNumber={30}
               step={0.1}
               onChange={onChange("roi")}
+              placeholder="Enter rate of interest"
             />
             <FieldInput
               value={value.tenure}
               label="Loan Tenure (Per Annum)"
               maxNumber={35}
               onChange={onChange("tenure")}
+              placeholder="Enter tenure"
             />
           </div>
           <Result result={result} />

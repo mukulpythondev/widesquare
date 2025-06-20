@@ -68,10 +68,10 @@ const ScheduleViewing = ({ propertyId, propertyTitle, propertyLocation, property
         >
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 text-gray-400 hover:text-gray-600 bg-white rounded-full p-1 hover:bg-gray-100 transition-colors z-10"
+            className="absolute top-5 right-5 text-black hover:text-gray-700 bg-white rounded-full p-1 hover:bg-gray-100 transition-colors z-10"
             aria-label="Close dialog"
           >
-            <X size={20} />
+            <X size={20} className="text-black" />
           </button>
 
           {!isSuccess ? (
@@ -87,13 +87,13 @@ const ScheduleViewing = ({ propertyId, propertyTitle, propertyLocation, property
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h2 className="text-xl font-bold text-gray-900 truncate">Property Enquiry</h2>
+                  <h2 className="text-xl font-bold text-black truncate">Property Enquiry</h2>
                   {propertyTitle && (
-                    <p className="text-gray-700 font-medium truncate">{propertyTitle}</p>
+                    <p className="text-black font-medium truncate">{propertyTitle}</p>
                   )}
                   {propertyLocation && (
-                    <div className="flex items-center text-sm text-gray-500">
-                      <MapPin className="w-3 h-3 mr-1" />
+                    <div className="flex items-center text-sm text-gray-700">
+                      <MapPin className="w-3 h-3 mr-1 text-black" />
                       <span className="truncate">{propertyLocation}</span>
                     </div>
                   )}
@@ -107,7 +107,7 @@ const ScheduleViewing = ({ propertyId, propertyTitle, propertyLocation, property
                   placeholder="Your Name"
                   value={guestInfo.name}
                   onChange={handleGuestChange}
-                  className="w-full px-4 py-2 border rounded-lg"
+                  className="w-full px-4 py-2 border rounded-lg text-black bg-white"
                   required
                 />
                 <input
@@ -116,7 +116,7 @@ const ScheduleViewing = ({ propertyId, propertyTitle, propertyLocation, property
                   placeholder="Your Email"
                   value={guestInfo.email}
                   onChange={handleGuestChange}
-                  className="w-full px-4 py-2 border rounded-lg"
+                  className="w-full px-4 py-2 border rounded-lg text-black bg-white"
                   required
                 />
                 <input
@@ -125,13 +125,13 @@ const ScheduleViewing = ({ propertyId, propertyTitle, propertyLocation, property
                   placeholder="Your Phone"
                   value={guestInfo.phone}
                   onChange={handleGuestChange}
-                  className="w-full px-4 py-2 border rounded-lg"
+                  className="w-full px-4 py-2 border rounded-lg text-black bg-white"
                   required
                 />
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:bg-blue-400"
+                  className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-900 transition-colors flex items-center justify-center gap-2 disabled:bg-gray-400"
                 >
                   {loading ? "Sending..." : "Send Enquiry"}
                 </button>
@@ -146,13 +146,13 @@ const ScheduleViewing = ({ propertyId, propertyTitle, propertyLocation, property
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Enquiry Sent!</h3>
-              <p className="text-gray-600 mb-6">
+              <h3 className="text-xl font-bold text-black mb-2">Enquiry Sent!</h3>
+              <p className="text-gray-700 mb-6">
                 We've sent your enquiry to our team. You'll be contacted soon.
               </p>
               <button
                 onClick={onClose}
-                className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors"
+                className="bg-black text-white py-2 px-6 rounded-lg hover:bg-gray-900 transition-colors"
               >
                 Close
               </button>
@@ -161,8 +161,8 @@ const ScheduleViewing = ({ propertyId, propertyTitle, propertyLocation, property
 
           {!isSuccess && (
             <div className="mt-6 pt-4 border-t border-gray-100">
-              <div className="flex items-center text-sm text-gray-600">
-                <Users className="w-4 h-4 text-blue-600 mr-2" />
+              <div className="flex items-center text-sm text-gray-700">
+                <Users className="w-4 h-4 text-black mr-2" />
                 <span>A qualified agent will contact you soon</span>
               </div>
             </div>

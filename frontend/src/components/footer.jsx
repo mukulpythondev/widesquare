@@ -21,16 +21,16 @@ const MobileFooterSection = ({ title, children }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border-b border-gray-200 py-3 lg:border-none lg:py-0">
+    <div className="border-b border-border py-3 lg:border-none lg:py-0 bg-background">
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className="flex w-full items-center justify-between text-left lg:hidden"
       >
-        <h3 className="text-sm font-bold tracking-wider text-gray-700 uppercase">
+        <h3 className="text-sm font-bold tracking-wider text-foreground uppercase">
           {title}
         </h3>
         <ChevronDown 
-          className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isOpen ? 'transform rotate-180' : ''}`} 
+          className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${isOpen ? 'transform rotate-180' : ''}`} 
         />
       </button>
       
@@ -62,7 +62,7 @@ const FooterColumn = ({ title, children, className = '', delay = 0 }) => {
       className={className}
     >
       {title && (
-        <h3 className="hidden lg:block text-sm font-bold tracking-wider text-gray-700 uppercase mb-4">
+        <h3 className="hidden lg:block text-sm font-bold tracking-wider text-foreground uppercase mb-4">
           {title}
         </h3>
       )}
@@ -76,9 +76,9 @@ const FooterLink = ({ href, children }) => {
   return (
     <a 
       href={href} 
-      className="flex items-center text-base text-gray-600 transition-all duration-200 hover:text-blue-600 hover:translate-x-1 py-1.5 lg:py-0"
+      className="flex items-center text-base text-muted-foreground transition-all duration-200 hover:text-primary hover:translate-x-1 py-1.5 lg:py-0 group"
     >
-      <ChevronRight className="w-3.5 h-3.5 mr-1 text-blue-500 opacity-0 transition-all duration-200 group-hover:opacity-100" />
+      <ChevronRight className="w-3.5 h-3.5 mr-1 text-primary opacity-0 transition-all duration-200 group-hover:opacity-100" />
       {children}
     </a>
   );
@@ -86,10 +86,10 @@ const FooterLink = ({ href, children }) => {
 
 // Social Links Component
 const socialLinks = [
-  { icon: Twitter, href: '#', label: 'Twitter', color: 'bg-[#1DA1F2]', hoverColor: 'hover:bg-[#1DA1F2]/90' },
-  { icon: Facebook, href: '#', label: 'Facebook', color: 'bg-[#1877F2]', hoverColor: 'hover:bg-[#1877F2]/90' },
-  { icon: Instagram, href: '#', label: 'Instagram', color: 'bg-gradient-to-tr from-[#fd5949] via-[#d6249f] to-[#285AEB]', hoverColor: 'hover:opacity-90' },
-  { icon: Github, href: 'https://github.com/AAYUSH412/Real-Estate-Website', label: 'GitHub', color: 'bg-[#333]', hoverColor: 'hover:bg-gray-800' },
+  { icon: Twitter, href: '#', label: 'Twitter', color: 'bg-foreground', hoverColor: 'hover:bg-primary' },
+  { icon: Facebook, href: '#', label: 'Facebook', color: 'bg-foreground', hoverColor: 'hover:bg-primary' },
+  { icon: Instagram, href: '#', label: 'Instagram', color: 'bg-foreground', hoverColor: 'hover:bg-primary' },
+  { icon: Github, href: 'https://github.com/AAYUSH412/Real-Estate-Website', label: 'GitHub', color: 'bg-foreground', hoverColor: 'hover:bg-primary' },
 ];
 
 const SocialLinks = () => {
@@ -104,7 +104,7 @@ const SocialLinks = () => {
           title={label}
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex items-center justify-center text-white ${color} ${hoverColor} rounded-full w-9 h-9 shadow-sm transition-all duration-200`}
+          className={`flex items-center justify-center text-background ${color} ${hoverColor} rounded-full w-9 h-9 shadow-sm transition-all duration-200`}
         >
           <Icon className="w-4 h-4" />
         </motion.a>
@@ -127,9 +127,9 @@ const ThoughtOfTheDay = () => {
   const thought = thoughts[today % thoughts.length];
 
   return (
-    <div className="w-full bg-blue-50 rounded-lg p-6 shadow-sm">
-      <h3 className="text-lg font-bold tracking-wider text-blue-700 uppercase mb-2">Thought of the Day</h3>
-      <p className="text-gray-700 text-base italic">"{thought}"</p>
+    <div className="w-full bg-card rounded-lg p-6 shadow-sm">
+      <h3 className="text-lg font-bold tracking-wider text-primary uppercase mb-2">Thought of the Day</h3>
+      <p className="text-foreground text-base italic">"{thought}"</p>
     </div>
   );
 };
@@ -168,22 +168,22 @@ const contactInfo = [
 
 const Footer = () => {
   return (
-    <footer>
+    <footer className="bg-background text-foreground">
       {/* Main Footer */}
-      <div className="bg-gradient-to-b from-gray-50 to-gray-100 pt-12 lg:pt-16 pb-12 border-t border-gray-200">
+      <div className="pt-12 lg:pt-16 pb-12 border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Brand section */}
           <div className="mb-10">
             <div className="flex items-center justify-center lg:justify-start">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Home className="h-6 w-6 text-blue-600" />
+              <div className="p-2 bg-card rounded-lg">
+                <Home className="h-6 w-6 text-primary" />
               </div>
-              <span className="ml-3 text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+              <span className="ml-3 text-2xl font-bold text-primary">
                 Widesquare
               </span>
             </div>
             
-            <p className="text-gray-600 mt-4 text-center lg:text-left lg:mt-6 max-w-md mx-auto lg:mx-0 leading-relaxed">
+            <p className="text-muted-foreground mt-4 text-center lg:text-left lg:mt-6 max-w-md mx-auto lg:mx-0 leading-relaxed">
               Your trusted partner in finding the perfect property. We make property hunting simple, efficient, and tailored to your unique needs.
             </p>
             
@@ -223,11 +223,11 @@ const Footer = () => {
                   <li key={index}>
                     <a 
                       href={item.href} 
-                      className="flex items-start text-gray-600 hover:text-blue-600 transition-colors duration-200"
+                      className="flex items-start text-muted-foreground hover:text-primary transition-colors duration-200"
                       target={item.icon === MapPin ? "_blank" : undefined}
                       rel={item.icon === MapPin ? "noopener noreferrer" : undefined}
                     >
-                      <item.icon className="w-4 h-4 mt-1 mr-3 flex-shrink-0 text-blue-500" />
+                      <item.icon className="w-4 h-4 mt-1 mr-3 flex-shrink-0 text-primary" />
                       <span className="text-sm">{item.text}</span>
                     </a>
                   </li>
@@ -269,11 +269,11 @@ const Footer = () => {
                   <li key={index}>
                     <a 
                       href={item.href} 
-                      className="flex items-start text-gray-600 hover:text-blue-600 transition-colors duration-200"
+                      className="flex items-start text-muted-foreground hover:text-primary transition-colors duration-200"
                       target={item.icon === MapPin ? "_blank" : undefined}
                       rel={item.icon === MapPin ? "noopener noreferrer" : undefined}
                     >
-                      <item.icon className="w-4 h-4 mt-1 mr-3 flex-shrink-0 text-blue-500" />
+                      <item.icon className="w-4 h-4 mt-1 mr-3 flex-shrink-0 text-primary" />
                       <span className="text-sm">{item.text}</span>
                     </a>
                   </li>
@@ -289,9 +289,9 @@ const Footer = () => {
       </div>
       
       {/* Bottom Bar */}
-      <div className="bg-gray-100 border-t border-gray-200 py-6">
+      <div className="bg-card border-t border-border py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-gray-600 mb-4 md:mb-0 text-center md:text-left">
+          <p className="text-sm text-muted-foreground mb-4 md:mb-0 text-center md:text-left">
             © {new Date().getFullYear()} Widesquare properties consultancy Pvt. Ltd. All Rights Reserved.
           </p>
           
@@ -299,7 +299,7 @@ const Footer = () => {
             href="/properties"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium"
+            className="flex items-center text-primary hover:text-foreground text-sm font-medium"
           >
             Browse Our Properties
             <ArrowRight className="ml-2 h-4 w-4" />

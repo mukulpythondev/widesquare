@@ -30,7 +30,7 @@ const cardVariants = {
 
 const Features = () => {
   return (
-    <section className="py-24 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+    <section className="py-24 bg-background overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -40,10 +40,12 @@ const Features = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <span className="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-sm font-medium tracking-wide uppercase">Our Strengths</span>
-          <h2 className="text-4xl font-bold text-gray-900 mt-4 mb-4">Why Choose Us</h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 mx-auto mb-6 rounded-full"></div>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <span className="bg-card text-primary px-4 py-1.5 rounded-full text-sm font-medium tracking-wide uppercase">
+            Our Strengths
+          </span>
+          <h2 className="text-4xl font-bold text-foreground mt-4 mb-4">Why Choose Us</h2>
+          <div className="w-24 h-1 bg-primary mx-auto mb-6 rounded-full"></div>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             We're committed to providing exceptional service and finding the
             perfect property for you with our innovative approach
           </p>
@@ -60,28 +62,28 @@ const Features = () => {
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg hover:shadow-xl border border-gray-50 transition-all duration-300"
+              className="bg-card p-6 sm:p-8 rounded-2xl shadow-lg hover:shadow-xl border border-border transition-all duration-300"
               variants={cardVariants}
               whileHover={{ 
                 y: -10,
                 boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)"
               }}
             >
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl flex items-center justify-center mb-6 transform transition-transform duration-300 group-hover:rotate-6">
-                <feature.icon className="h-8 w-8 text-blue-600" />
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 transform transition-transform duration-300 group-hover:rotate-6">
+                <feature.icon className="h-8 w-8 text-primary" />
               </div>
               
-              <h3 className="text-xl font-bold text-gray-900 mb-3">
+              <h3 className="text-xl font-bold text-foreground mb-3">
                 {feature.title}
               </h3>
               
-              <p className="text-gray-600 leading-relaxed mb-6">
+              <p className="text-muted-foreground leading-relaxed mb-6">
                 {feature.description}
               </p>
               
               <motion.a 
                 href="/services" 
-                className="inline-flex items-center text-blue-600 text-sm font-medium hover:text-blue-800 transition-colors"
+                className="inline-flex items-center text-primary text-sm font-semibold underline underline-offset-4 hover:text-foreground hover:underline"
                 whileHover={{ x: 5 }}
               >
                 Learn more <ArrowRight className="ml-2 h-4 w-4" />
@@ -102,7 +104,7 @@ const Features = () => {
             href="/services"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all shadow-blue-500/30 flex items-center"
+            className="px-6 py-3 bg-black text-white font-medium rounded-lg shadow-lg hover:bg-gray-900 hover:text-white transition-all flex items-center"
           >
             Browse Our Services
             <ArrowRight className="ml-2 h-5 w-5" />

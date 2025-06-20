@@ -87,8 +87,8 @@ const SearchBar = ({ onSearch, className }) => {
           )}
           <button 
             type="submit"
-            className="bg-blue-600 text-white px-4 py-1.5 rounded-lg 
-              hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="bg-zinc-950 text-white px-4 py-1.5 rounded-lg 
+              hover:bg-zinc-800 transition-colors flex items-center gap-2"
           >
             <Search className="h-4 w-4" />
             Search

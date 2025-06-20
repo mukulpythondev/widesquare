@@ -63,7 +63,6 @@ const PropertiesPage = () => {
     return propertyState.properties
       .filter((property) => property.status == "approved")
       .filter((property) => {
-        // Apply filters
         if (!property) return false; 
         const searchMatch = !filters.searchQuery || 
           [property.title, property.description, property.location]
@@ -110,7 +109,7 @@ const PropertiesPage = () => {
 
   if (propertyState.loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -119,7 +118,7 @@ const PropertiesPage = () => {
           <div className="relative mb-6">
             {/* Main loader animation */}
             <motion.div
-              className="w-24 h-24 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center relative shadow-lg shadow-blue-500/30"
+              className="w-24 h-24 bg-gray-100 rounded-2xl flex items-center justify-center relative shadow-lg"
               animate={{ 
                 rotate: [0, 0, 360, 360, 0],
                 scale: [1, 0.9, 0.9, 1, 1],
@@ -127,12 +126,12 @@ const PropertiesPage = () => {
               }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             >
-              <Home className="w-12 h-12 text-white" />
+              <Home className="w-12 h-12 text-black" />
             </motion.div>
             
             {/* Moving dots around the icon */}
             <motion.div 
-              className="absolute w-3 h-3 bg-blue-300 rounded-full right-4 bottom-10"
+              className="absolute w-3 h-3 bg-gray-400 rounded-full right-4 bottom-10"
               animate={{
                 x: [0, 30, 0, -30, 0],
                 y: [-30, 0, 30, 0, -30],
@@ -141,7 +140,7 @@ const PropertiesPage = () => {
             />
             
             <motion.div 
-              className="absolute w-2 h-2 bg-indigo-400 rounded-full"
+              className="absolute w-2 h-2 bg-gray-300 rounded-full"
               animate={{
                 x: [0, -30, 0, 30, 0],
                 y: [30, 0, -30, 0, 30],
@@ -150,10 +149,10 @@ const PropertiesPage = () => {
             />
   
             {/* Background pulse effect */}
-            <div className="absolute inset-0 bg-blue-500/10 rounded-full animate-ping" style={{ animationDuration: '3s' }}></div>
+            <div className="absolute inset-0 bg-gray-200 rounded-full animate-ping" style={{ animationDuration: '3s' }}></div>
           </div>
           
-          <h3 className="text-2xl font-bold text-gray-800 mb-3 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <h3 className="text-2xl font-bold text-black mb-3">
             Loading Properties
           </h3>
           
@@ -164,11 +163,10 @@ const PropertiesPage = () => {
           {/* Progress bar with animated gradient */}
           <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden relative">
             <motion.div
-              className="h-full bg-gradient-to-r from-blue-600 via-indigo-500 to-blue-600 bg-size-200 absolute top-0 left-0 right-0"
+              className="h-full bg-gray-400 absolute top-0 left-0 right-0"
               animate={{ 
-                backgroundPosition: ["0% center", "100% center", "0% center"] 
+                x: ["-100%", "100%"],
               }}
-              style={{ backgroundSize: "200% 100%" }}
               transition={{ 
                 duration: 2,
                 repeat: Infinity,
@@ -177,11 +175,11 @@ const PropertiesPage = () => {
             />
           </div>
           
-          <div className="flex items-center mt-4 text-xs text-blue-600">
+          <div className="flex items-center mt-4 text-xs text-black">
             <motion.div 
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 1.5, repeat: Infinity }}
-              className="w-1.5 h-1.5 bg-blue-600 rounded-full mr-2"
+              className="w-1.5 h-1.5 bg-black rounded-full mr-2"
             />
             <span>Please wait while we curate properties for you</span>
           </div>
@@ -192,17 +190,16 @@ const PropertiesPage = () => {
 
   if (propertyState.error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center text-red-600 p-6 rounded-lg bg-red-50 max-w-md"
+          className="text-center text-red-600 p-6 rounded-lg bg-gray-100 max-w-md"
         >
           <p className="font-medium mb-4">{propertyState.error}</p>
           <button
             onClick={fetchProperties}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 
-              transition-colors duration-200"
+            className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-900 transition-colors duration-200"
           >
             Try Again
           </button>
@@ -215,7 +212,7 @@ const PropertiesPage = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-gray-50 pt-16"
+      className="min-h-screen bg-white pt-16"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <motion.header
@@ -223,7 +220,7 @@ const PropertiesPage = () => {
           animate={{ y: 0, opacity: 1 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">
             Find Your Perfect Property
           </h1>
           <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
@@ -255,6 +252,7 @@ const PropertiesPage = () => {
                 <SearchBar
                   onSearch={(query) => setFilters(prev => ({ ...prev, searchQuery: query }))}
                   className="flex-1"
+                  buttonClassName="bg-black text-white px-4 py-2 rounded-lg ml-2"
                 />
 
                 <div className="flex items-center gap-4">
@@ -264,7 +262,7 @@ const PropertiesPage = () => {
                       ...prev,
                       sortBy: e.target.value
                     }))}
-                    className="px-3 py-2 border rounded-lg text-sm"
+                    className="px-3 py-2 border rounded-lg text-sm text-black bg-white"
                   >
                     <option value="">Sort By</option>
                     <option value="price-asc">Price: Low to High</option>
@@ -281,23 +279,23 @@ const PropertiesPage = () => {
                       className="p-2 rounded-lg hover:bg-gray-100"
                       title="Toggle Filters"
                     >
-                      <SlidersHorizontal className="w-5 h-5" />
+                      <SlidersHorizontal className="w-5 h-5 text-black" />
                     </button>
                     <button
                       onClick={() => setViewState(prev => ({ ...prev, isGridView: true }))}
                       className={`p-2 rounded-lg ${
-                        viewState.isGridView ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100"
+                        viewState.isGridView ? "bg-gray-200 text-black" : "hover:bg-gray-100"
                       }`}
                     >
-                      <Grid className="w-5 h-5" />
+                      <Grid className="w-5 h-5 text-black" />
                     </button>
                     <button
                       onClick={() => setViewState(prev => ({ ...prev, isGridView: false }))}
                       className={`p-2 rounded-lg ${
-                        !viewState.isGridView ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100"
+                        !viewState.isGridView ? "bg-gray-200 text-black" : "hover:bg-gray-100"
                       }`}
                     >
-                      <List className="w-5 h-5" />
+                      <List className="w-5 h-5 text-black" />
                     </button>
                   </div>
                 </div>
@@ -317,6 +315,8 @@ const PropertiesPage = () => {
                       key={property._id}
                       property={property}
                       viewType={viewState.isGridView ? "grid" : "list"}
+                      cardClassName="bg-white text-black"
+                      iconClassName="text-black"
                     />
                   ))
                 ) : (
@@ -326,8 +326,8 @@ const PropertiesPage = () => {
                     exit={{ opacity: 0 }}
                     className="col-span-full text-center py-12 bg-white rounded-lg shadow-sm"
                   >
-                    <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    <MapPin className="w-12 h-12 text-black mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-black mb-2">
                       No properties found
                     </h3>
                     <p className="text-gray-600">

@@ -40,9 +40,8 @@ export const AnimatedContainer = ({ children, distance = 100, direction = "verti
 
   const springProps = useSpring({
     from: {
-      transform: `translate${directions[direction]}(${
-        reverse ? `-${distance}px` : `${distance}px`
-      })`,
+      transform: `translate${directions[direction]}(${reverse ? `-${distance}px` : `${distance}px`
+        })`,
     },
     to: inView ? { transform: `translate${directions[direction]}(0px)` } : {},
     config: { tension: 50, friction: 25 },
@@ -80,7 +79,7 @@ const Hero = () => {
               backgroundPosition: "center",
             }}
           >
-            <div className="absolute inset-0 bg-gradient-to-t from-sky-300/40 via-slate/10 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-transparent" />
           </motion.div>
 
           {/* Content */}
@@ -91,17 +90,17 @@ const Hero = () => {
               transition={{ duration: 1 }}
               className="mb-12"
             >
-              <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-black mb-6 leading-tight">
+              <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight">
                 <RadialGradient
                   gradient={["circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%"]}
                 >
                   Find Your Perfect
                   <br />
-                  <span className="text-gray-800">Property Space</span>
+                  <span className="text-primary">Property Space</span>
                 </RadialGradient>
               </h1>
 
-              <p className="text-slate-700 text-lg sm:text-xl mb-8 max-w-2xl mx-auto">
+              <p className="text-muted-foreground text-lg sm:text-xl mb-8 max-w-2xl mx-auto">
                 Discover your dream property in the most sought-after locations
               </p>
             </motion.div>
@@ -113,22 +112,21 @@ const Hero = () => {
               transition={{ duration: 1, delay: 0.2 }}
               className="relative max-w-md mx-auto"
             >
-              <div className="flex flex-col md:flex-row gap-4 p-2 bg-white/80 backdrop-blur-md rounded-2xl shadow-lg">
+              <div className="flex flex-col md:flex-row gap-4 p-2 bg-card/80 backdrop-blur-md rounded-2xl shadow-lg">
                 <div className="relative flex-1">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onFocus={() => setShowSuggestions(true)}
                     placeholder="Enter location..."
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border-0 bg-white/90 shadow-sm focus:ring-2 focus:ring-blue-500 transition-all"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border-0 bg-input/90 text-foreground shadow-sm focus:ring-2 focus:ring-primary transition-all"
                   />
                 </div>
                 <button
                   onClick={() => handleSubmit()}
-                  className="md:w-auto w-full bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 
-                    transition-colors flex items-center justify-center gap-2 font-medium shadow-md"
+                  className="md:w-auto w-full bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 hover:text-white transition-colors duration-300 flex items-center justify-center gap-2 font-medium shadow-md"
                 >
                   <Search className="w-5 h-5" />
                   <span>Search</span>
@@ -142,10 +140,10 @@ const Hero = () => {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute left-0 right-0 mt-2 bg-white rounded-xl shadow-lg divide-y divide-gray-100 overflow-hidden"
+                    className="absolute left-0 right-0 mt-2 bg-card rounded-xl shadow-lg divide-y divide-border overflow-hidden"
                   >
                     <div className="p-2">
-                      <h3 className="text-xs font-medium text-gray-500 px-3 mb-2">
+                      <h3 className="text-xs font-medium text-muted-foreground px-3 mb-2">
                         Popular Locations
                       </h3>
                       {popularLocations.map((location) => (
@@ -155,14 +153,13 @@ const Hero = () => {
                             setSearchQuery(location);
                             handleSubmit(location);
                           }}
-                          className="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg flex items-center 
-                            justify-between text-gray-700 transition-colors"
+                          className="w-full text-left px-3 py-2 hover:bg-muted rounded-lg flex items-center justify-between text-foreground transition-colors"
                         >
                           <div className="flex items-center">
-                            <MapPin className="w-4 h-4 mr-2 text-gray-400" />
+                            <MapPin className="w-4 h-4 mr-2 text-muted-foreground" />
                             <span>{location}</span>
                           </div>
-                          <ArrowRight className="w-4 h-4 text-gray-400" />
+                          <ArrowRight className="w-4 h-4 text-muted-foreground" />
                         </button>
                       ))}
                     </div>
@@ -175,6 +172,6 @@ const Hero = () => {
       </div>
     </AnimatedContainer>
   );
-};
 
+}
 export default Hero;
