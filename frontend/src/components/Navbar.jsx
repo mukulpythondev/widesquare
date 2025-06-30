@@ -79,7 +79,7 @@ const Navbar = () => {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 bg-white ${
         scrolled
           ? "bg-background/95 shadow-md backdrop-blur-lg border-b border-border"
           : "bg-background/80 backdrop-blur-md border-b border-border"
@@ -307,7 +307,7 @@ const NavLinks = ({ currentPath, user }) => {
   }, []);
 
   return (
-    <div className="flex space-x-6 items-center">
+    <div className="flex space-x-6 items-center ">
       {navLinks.map(({ name, path, icon: Icon }) => {
         const isActive =
           path === "/" ? currentPath === path : currentPath.startsWith(path);
@@ -374,7 +374,7 @@ const MobileNavLinks = ({
   const showSellerPanel = user && user.role === "seller";
 
   return (
-    <div className="flex flex-col space-y-1 pb-3">
+    <div className="flex flex-col space-y-1 pb-3 ">
       <div className="w-full px-3 py-1">
         <div className="border-t border-border"></div>
       </div>
