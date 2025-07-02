@@ -26,5 +26,5 @@ jobs:
             cd ${{ secrets.BACKEND_DIR }}
             git pull origin main
             npm install
-            pm2 restart backend || pm2 start backend.js --name backend
+            pm2 restart backend || pm2 start server.js --name backend
           EOF
