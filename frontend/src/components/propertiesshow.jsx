@@ -86,7 +86,7 @@ const PropertyCard = ({ property }) => {
       {/* Property Image */}
       <div className="relative h-64">
         <img
-          src={property.image[0]}
+          src={property.image && property.image[0] && property.image[0].url ? property.image[0].url : "/no-image.jpg"}
           alt={property.title}
           className="w-full h-full object-cover"
         />

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { 
-  MapPin, 
-  IndianRupee, 
-  BedDouble, 
-  Bath, 
+import {
+  MapPin,
+  IndianRupee,
+  BedDouble,
+  Bath,
   Maximize,
   Share2,
   ChevronLeft,
@@ -86,7 +86,13 @@ const PropertyCard = ({ property, viewType }) => {
         <AnimatePresence mode="wait">
           <motion.img
             key={currentImageIndex}
-            src={property.image[currentImageIndex]}
+            src={
+              property.image &&
+                property.image[currentImageIndex] &&
+                property.image[currentImageIndex].url
+                ? property.image[currentImageIndex].url
+                : "/no-image.jpg"
+            }
             alt={property.title}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -147,14 +153,14 @@ const PropertyCard = ({ property, viewType }) => {
 
         {/* Property Tags */}
         <div className="absolute top-4 left-4 flex flex-col gap-2">
-          <motion.span 
+          <motion.span
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="bg-black text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg"
           >
             {property.type}
           </motion.span>
-          <motion.span 
+          <motion.span
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="bg-black text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg"

@@ -35,18 +35,16 @@ const addproperty = async (req, res) => {
       phone,
     } = req.body;
 
-    // Parse amenities to always be an array of strings
     const parsedAmenities = parseAmenities(amenities);
 
-    // Handle images
     const image1 = req.files?.image1 && req.files.image1[0];
     const image2 = req.files?.image2 && req.files.image2[0];
     const image3 = req.files?.image3 && req.files.image3[0];
     const image4 = req.files?.image4 && req.files.image4[0];
     const images = [image1, image2, image3, image4].filter(Boolean);
 
-    // Upload images to ImageKit and delete after upload
-    const imageUrls = await Promise.all(
+    // Save both url and fileId for each image
+    const imageObjs = await Promise.all(
       images.map(async (item) => {
         const result = await imagekit.upload({
           file: fs.readFileSync(item.path),
@@ -56,7 +54,7 @@ const addproperty = async (req, res) => {
         fs.unlink(item.path, (err) => {
           if (err) console.log("Error deleting the file: ", err);
         });
-        return result.url;
+        return { url: result.url, fileId: result.fileId };
       })
     );
 
@@ -65,14 +63,12 @@ const addproperty = async (req, res) => {
     let isAdmin = user.role === "admin";
     let isSeller = user.role === "seller";
 
-    // If user is not agent or admin, make them seller
     if (!isAgent && !isAdmin && !isSeller) {
       user.role = "seller";
       await user.save();
       isSeller = true;
     }
 
-    // Set approval and status logic
     let isApproved = false;
     let status = "pending";
     let approvedBy = null;
@@ -89,7 +85,6 @@ const addproperty = async (req, res) => {
       status = "pending";
     }
 
-    // Only add beds/baths if not Plot type
     const propertyData = {
       title,
       location,
@@ -99,7 +94,7 @@ const addproperty = async (req, res) => {
       availability,
       description,
       amenities: parsedAmenities,
-      image: imageUrls,
+      image: imageObjs,
       phone,
       seller: req.user._id,
       isApproved,
@@ -115,16 +110,13 @@ const addproperty = async (req, res) => {
 
     await property.save();
 
-    // Notify user/admin if needed
     if (isAgent || isSeller) {
-      // Notify user
       await transporter.sendMail({
         from: process.env.SMTP_USER,
         to: user.email,
         subject: "Property Submitted for Approval",
         html: `<p>Your property "${title}" has been sent to admin for approval.</p>`,
       });
-      // Notify admin
       await transporter.sendMail({
         from: process.env.SMTP_USER,
         to: process.env.ADMIN_EMAILS,
@@ -162,14 +154,28 @@ const listproperty = async (req, res) => {
 // 3. Remove property (not recommended for seller, use DELETE route below)
 const removeproperty = async (req, res) => {
   try {
-    const property = await Property.findByIdAndDelete(req.body.id);
+    const property = await Property.findById(req.body.id);
     if (!property) {
-      return res
-        .status(404)
-        .json({ message: "Property not found", success: false });
+      return res.status(404).json({ message: "Property not found", success: false });
     }
+
+    // Delete images from ImageKit using fileId
+    if (property.image && property.image.length > 0) {
+      for (const img of property.image) {
+        if (img.fileId) {
+          try {
+            await imagekit.deleteFile(img.fileId);
+          } catch (err) {
+            console.error("Error deleting image from ImageKit:", err.message);
+          }
+        }
+      }
+    }
+
+    await Property.findByIdAndDelete(req.body.id);
+
     return res.json({
-      message: "Property removed successfully",
+      message: "Property and images removed successfully",
       success: true,
     });
   } catch (error) {
@@ -196,26 +202,21 @@ const updateproperty = async (req, res) => {
       phone,
     } = req.body;
 
-    // Parse amenities to always be an array of strings
     const parsedAmenities = parseAmenities(amenities);
 
-    // Find the property by ID
     const property = await Property.findById(id);
     if (!property) {
       return res.status(404).json({ message: "Property not found", success: false });
     }
 
-    // Defensive check for seller
     if (!property.seller) {
       return res.status(400).json({ message: "Property has no seller", success: false });
     }
 
-    // Defensive check for user
     if (!req.user) {
       return res.status(401).json({ message: "User not authenticated", success: false });
     }
 
-    // Only allow update if the logged-in user is the seller or admin
     if (
       property.seller.toString() !== req.user._id.toString() &&
       req.user.role !== "admin"
@@ -234,7 +235,6 @@ const updateproperty = async (req, res) => {
       property.description = description;
       property.amenities = parsedAmenities;
       property.phone = phone;
-      // Only update beds/baths if not Plot type
       if (type !== "Plot") {
         property.beds = beds;
         property.baths = baths;
@@ -242,7 +242,6 @@ const updateproperty = async (req, res) => {
         property.beds = undefined;
         property.baths = undefined;
       }
-      // Keep existing images
       await property.save();
       return res.json({
         message: "Property updated successfully",
@@ -257,8 +256,21 @@ const updateproperty = async (req, res) => {
     const image4 = req.files?.image4 && req.files.image4[0];
     const images = [image1, image2, image3, image4].filter(Boolean);
 
-    // Upload images to ImageKit and delete after upload
-    const imageUrls = await Promise.all(
+    // Delete old images from ImageKit
+    if (property.image && property.image.length > 0) {
+      for (const img of property.image) {
+        if (img.fileId) {
+          try {
+            await imagekit.deleteFile(img.fileId);
+          } catch (err) {
+            console.error("Error deleting image from ImageKit:", err.message);
+          }
+        }
+      }
+    }
+
+    // Upload new images to ImageKit and delete after upload
+    const imageObjs = await Promise.all(
       images.map(async (item) => {
         const result = await imagekit.upload({
           file: fs.readFileSync(item.path),
@@ -268,11 +280,10 @@ const updateproperty = async (req, res) => {
         fs.unlink(item.path, (err) => {
           if (err) console.log("Error deleting the file: ", err);
         });
-        return result.url;
+        return { url: result.url, fileId: result.fileId };
       })
     );
 
-    // Update all fields including images
     property.title = title;
     property.location = location;
     property.price = price;
@@ -281,9 +292,8 @@ const updateproperty = async (req, res) => {
     property.availability = availability;
     property.description = description;
     property.amenities = parsedAmenities;
-    property.image = imageUrls;
+    property.image = imageObjs;
     property.phone = phone;
-    // Only update beds/baths if not Plot type
     if (type !== "Plot") {
       property.beds = beds;
       property.baths = baths;
@@ -299,7 +309,7 @@ const updateproperty = async (req, res) => {
     res.status(500).json({ message: "Server Error", success: false });
   }
 };
-// 5. Get single property
+
 const singleproperty = async (req, res) => {
   try {
     const { id } = req.params;
@@ -316,7 +326,6 @@ const singleproperty = async (req, res) => {
   }
 };
 
-// 6. Seller/Agent: Get my properties
 const myProperties = async (req, res) => {
   try {
     const properties = await Property.find({ seller: req.user._id });
@@ -326,7 +335,6 @@ const myProperties = async (req, res) => {
   }
 };
 
-// 7. Admin: Get all pending property requests
 const getPendingProperties = async (req, res) => {
   try {
     const properties = await Property.find({ status: "pending" }).populate(

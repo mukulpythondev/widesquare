@@ -225,7 +225,13 @@ const PropertyListings = () => {
                 {/* Property Image */}
                 <div className="relative h-48">
                   <img
-                    src={property.image[0] || "/placeholder.jpg"}
+                    src={
+                      property.image &&
+                        property.image[0] &&
+                        property.image[0].url
+                        ? property.image[0].url
+                        : "/placeholder.jpg"
+                    }
                     alt={property.title}
                     className="w-full h-full object-cover"
                   />

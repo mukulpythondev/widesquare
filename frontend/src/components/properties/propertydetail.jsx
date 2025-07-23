@@ -258,7 +258,13 @@ const PropertyDetails = () => {
             <AnimatePresence mode="wait">
               <motion.img
                 key={activeImage}
-                src={property.image[activeImage]}
+                src={
+                  property.image &&
+                    property.image[activeImage] &&
+                    property.image[activeImage].url
+                    ? property.image[activeImage].url
+                    : "/no-image.jpg"
+                }
                 alt={`${property.title} - View ${activeImage + 1}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -269,7 +275,7 @@ const PropertyDetails = () => {
             </AnimatePresence>
 
             {/* Image Navigation */}
-            {property.image.length > 1 && (
+            {property.image && property.image.length > 1 && (
               <>
                 <button
                   onClick={() => setActiveImage(prev =>
@@ -295,7 +301,7 @@ const PropertyDetails = () => {
             {/* Image Counter */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 
               bg-black/70 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm">
-              {activeImage + 1} / {property.image.length}
+              {property.image ? activeImage + 1 : 0} / {property.image ? property.image.length : 0}
             </div>
           </div>
 
