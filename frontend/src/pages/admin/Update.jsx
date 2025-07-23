@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import { backendurl } from "../../config";
 import { X, Upload } from 'lucide-react';
 
-const PROPERTY_TYPES = ['House', 'Apartment', 'Office', 'Villa','Plot','Shop','Flat','Farmhouse','Warehouse','Commercial Space','industrial Property'];
+const PROPERTY_TYPES = ['House', 'Apartment', 'Office', 'Villa', 'Plot', 'Shop', 'Flat', 'Farmhouse', 'Warehouse', 'Commercial Space', 'industrial Property'];
 const AVAILABILITY_TYPES = ['rent', 'buy'];
 const AMENITIES = ['Lake View', 'Fireplace', 'Central heating and air conditioning', 'Dock', 'Pool', 'Garage', 'Garden', 'Gym', 'Security system', 'Master bathroom', 'Guest bathroom', 'Home theater', 'Exercise room/gym', 'Covered parking', 'High-speed internet ready'];
 
@@ -55,7 +55,9 @@ const Update = () => {
             amenities: property.amenities,
             images: property.image
           });
-          setPreviewUrls(property.image);
+          setPreviewUrls(Array.isArray(property.image)
+            ? property.image.map(img => img && img.url ? img.url : "/no-image.jpg")
+            : []);
         } else {
           toast.error(response.data.message);
         }
@@ -123,13 +125,13 @@ const Update = () => {
       formdata.append('price', formData.price);
       formdata.append('location', formData.location);
       formdata.append('description', formData.description);
-      
+
       // Only add beds/baths if not Plot type
       if (shouldShowBedsAndBaths()) {
         formdata.append('beds', formData.beds);
         formdata.append('baths', formData.baths);
       }
-      
+
       formdata.append('sqft', formData.sqft);
       formdata.append('phone', formData.phone);
       formdata.append('availability', formData.availability);
@@ -359,8 +361,8 @@ const Update = () => {
                   type="button"
                   onClick={() => handleAmenityToggle(amenity)}
                   className={`px-4 py-2 rounded-md text-sm font-medium ${formData.amenities.includes(amenity)
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
                 >
                   {amenity}

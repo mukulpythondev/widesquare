@@ -4,7 +4,10 @@ const serviceSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     description: String,
-    image: String,
+    image: {
+      url: { type: String },
+      fileId: { type: String }
+    },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }

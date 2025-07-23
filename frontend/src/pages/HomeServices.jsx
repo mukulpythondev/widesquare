@@ -60,7 +60,11 @@ const HomeServices = () => {
                         {services.map((service) => (
                             <div key={service._id} className="bg-white rounded-lg shadow-lg p-4 flex flex-col">
                                 <img
-                                    src={service.image || "/placeholder.jpg"}
+                                    src={
+                                        service.image && service.image.url
+                                            ? service.image.url
+                                            : "/placeholder.jpg"
+                                    }
                                     alt={service.title}
                                     className="w-full h-40 object-cover rounded mb-3"
                                 />

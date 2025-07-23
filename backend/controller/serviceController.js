@@ -7,20 +7,20 @@ import transporter from "../config/nodemailer.js";
 export const addService = async (req, res) => {
   try {
     const { title, description } = req.body;
-    let imageUrl = "";
+    let imageObj = {};
     if (req.file) {
       const uploadResponse = await imagekit.upload({
         file: fs.readFileSync(req.file.path),
         fileName: req.file.originalname,
         folder: "Services"
       });
-      imageUrl = uploadResponse.url;
+      imageObj = { url: uploadResponse.url, fileId: uploadResponse.fileId };
       fs.unlinkSync(req.file.path);
     }
     const service = await servicemodel.create({
       title,
       description,
-      image: imageUrl,
+      image: imageObj,
       createdBy: req.user._id,
     });
     res.json({ success: true, service });
@@ -51,7 +51,22 @@ export const updateService = async (req, res) => {
 
 export const deleteService = async (req, res) => {
   try {
+    const service = await servicemodel.findById(req.params.id);
+    if (!service) {
+      return res.status(404).json({ success: false, message: "Service not found" });
+    }
+
+    // Delete image from ImageKit using fileId
+    if (service.image && service.image.fileId) {
+      try {
+        await imagekit.deleteFile(service.image.fileId);
+      } catch (err) {
+        console.error("Error deleting service image from ImageKit:", err.message);
+      }
+    }
+
     await servicemodel.findByIdAndDelete(req.params.id);
+
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ success: false, message: "Error deleting service" });
