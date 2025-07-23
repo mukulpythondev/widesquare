@@ -39,10 +39,10 @@ const addproperty = async (req, res) => {
     const parsedAmenities = parseAmenities(amenities);
 
     // Handle images
-    const image1 = req.files.image1 && req.files.image1[0];
-    const image2 = req.files.image2 && req.files.image2[0];
-    const image3 = req.files.image3 && req.files.image3[0];
-    const image4 = req.files.image4 && req.files.image4[0];
+    const image1 = req.files?.image1 && req.files.image1[0];
+    const image2 = req.files?.image2 && req.files.image2[0];
+    const image3 = req.files?.image3 && req.files.image3[0];
+    const image4 = req.files?.image4 && req.files.image4[0];
     const images = [image1, image2, image3, image4].filter(Boolean);
 
     // Upload images to ImageKit and delete after upload
@@ -89,13 +89,11 @@ const addproperty = async (req, res) => {
       status = "pending";
     }
 
-    // Create property
-    const property = new Property({
+    // Only add beds/baths if not Plot type
+    const propertyData = {
       title,
       location,
       price,
-      beds,
-      baths,
       sqft,
       type,
       availability,
@@ -107,7 +105,13 @@ const addproperty = async (req, res) => {
       isApproved,
       status,
       approvedBy,
-    });
+    };
+    if (type !== "Plot") {
+      propertyData.beds = beds;
+      propertyData.baths = baths;
+    }
+
+    const property = new Property(propertyData);
 
     await property.save();
 
@@ -224,14 +228,20 @@ const updateproperty = async (req, res) => {
       property.title = title;
       property.location = location;
       property.price = price;
-      property.beds = beds;
-      property.baths = baths;
       property.sqft = sqft;
       property.type = type;
       property.availability = availability;
       property.description = description;
       property.amenities = parsedAmenities;
       property.phone = phone;
+      // Only update beds/baths if not Plot type
+      if (type !== "Plot") {
+        property.beds = beds;
+        property.baths = baths;
+      } else {
+        property.beds = undefined;
+        property.baths = undefined;
+      }
       // Keep existing images
       await property.save();
       return res.json({
@@ -241,10 +251,10 @@ const updateproperty = async (req, res) => {
     }
 
     // Handle new images if provided
-    const image1 = req.files.image1 && req.files.image1[0];
-    const image2 = req.files.image2 && req.files.image2[0];
-    const image3 = req.files.image3 && req.files.image3[0];
-    const image4 = req.files.image4 && req.files.image4[0];
+    const image1 = req.files?.image1 && req.files.image1[0];
+    const image2 = req.files?.image2 && req.files.image2[0];
+    const image3 = req.files?.image3 && req.files.image3[0];
+    const image4 = req.files?.image4 && req.files.image4[0];
     const images = [image1, image2, image3, image4].filter(Boolean);
 
     // Upload images to ImageKit and delete after upload
@@ -266,8 +276,6 @@ const updateproperty = async (req, res) => {
     property.title = title;
     property.location = location;
     property.price = price;
-    property.beds = beds;
-    property.baths = baths;
     property.sqft = sqft;
     property.type = type;
     property.availability = availability;
@@ -275,6 +283,14 @@ const updateproperty = async (req, res) => {
     property.amenities = parsedAmenities;
     property.image = imageUrls;
     property.phone = phone;
+    // Only update beds/baths if not Plot type
+    if (type !== "Plot") {
+      property.beds = beds;
+      property.baths = baths;
+    } else {
+      property.beds = undefined;
+      property.baths = undefined;
+    }
 
     await property.save();
     res.json({ message: "Property updated successfully", success: true });

@@ -6,8 +6,8 @@ const propertySchema = new mongoose.Schema(
     location: { type: String, required: true },
     price: { type: Number, required: true },
     image: { type: [String], required: true },
-    beds: { type: Number, },
-    baths: { type: Number},
+    beds: { type: Number }, // not required
+    baths: { type: Number }, // not required
     sqft: { type: Number, required: true },
     type: { type: String, required: true },
     availability: { type: String, required: true },
@@ -24,7 +24,7 @@ const propertySchema = new mongoose.Schema(
     
     agent: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // or your agent model name
+      ref: "User",
       required: false,
     },
 
