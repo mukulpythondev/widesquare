@@ -4,7 +4,7 @@ import axios from 'axios';
 import { backendurl } from "../../config";
 import { Upload, X } from 'lucide-react';
 
-const PROPERTY_TYPES = ['House', 'Apartment', 'Office', 'Villa','Shop','Flat','Farmhouse','Warehouse','Commercial Space','industrial Property'];
+const PROPERTY_TYPES = ['House', 'Apartment', 'Office', 'Villa','Plot','Shop','Flat','Farmhouse','Warehouse','Commercial Space','industrial Property'];
 const AVAILABILITY_TYPES = ['rent', 'buy'];
 const AMENITIES = ['Lake View', 'Fireplace', 'Central heating and air conditioning', 'Dock', 'Pool', 'Garage', 'Garden', 'Gym', 'Security system', 'Master bathroom', 'Guest bathroom', 'Home theater', 'Exercise room/gym', 'Covered parking', 'High-speed internet ready'];
 
@@ -28,12 +28,26 @@ const PropertyForm = () => {
   const [loading, setLoading] = useState(false);
   const [newAmenity, setNewAmenity] = useState('');
 
+  // Check if selected type should show beds/baths
+  const shouldShowBedsAndBaths = () => {
+    return formData.type !== 'Plot';
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+
+    // Reset beds and baths when Plot is selected
+    if (name === 'type' && value === 'Plot') {
+      setFormData(prev => ({
+        ...prev,
+        beds: '',
+        baths: ''
+      }));
+    }
   };
 
   const handleAmenityToggle = (amenity) => {
@@ -89,8 +103,13 @@ const PropertyForm = () => {
       formdata.append('price', formData.price);
       formdata.append('location', formData.location);
       formdata.append('description', formData.description);
-      formdata.append('beds', formData.beds);
-      formdata.append('baths', formData.baths);
+      
+      // Only add beds/baths if not Plot type
+      if (shouldShowBedsAndBaths()) {
+        formdata.append('beds', formData.beds);
+        formdata.append('baths', formData.baths);
+      }
+      
       formdata.append('sqft', formData.sqft);
       formdata.append('phone', formData.phone);
       formdata.append('availability', formData.availability);
@@ -251,38 +270,44 @@ const PropertyForm = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label htmlFor="beds" className="block text-sm font-medium text-gray-700">
-                  Bedrooms
-                </label>
-                <input
-                  type="number"
-                  id="beds"
-                  name="beds"
-                  required
-                  min="0"
-                  value={formData.beds}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                />
-              </div>
+            <div className={`grid ${shouldShowBedsAndBaths() ? 'grid-cols-3' : 'grid-cols-1'} gap-4`}>
+              {/* Beds - Only show if not Plot */}
+              {shouldShowBedsAndBaths() && (
+                <div>
+                  <label htmlFor="beds" className="block text-sm font-medium text-gray-700">
+                    Bedrooms
+                  </label>
+                  <input
+                    type="number"
+                    id="beds"
+                    name="beds"
+                    required
+                    min="0"
+                    value={formData.beds}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  />
+                </div>
+              )}
 
-              <div>
-                <label htmlFor="baths" className="block text-sm font-medium text-gray-700">
-                  Bathrooms
-                </label>
-                <input
-                  type="number"
-                  id="baths"
-                  name="baths"
-                  required
-                  min="0"
-                  value={formData.baths}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                />
-              </div>
+              {/* Baths - Only show if not Plot */}
+              {shouldShowBedsAndBaths() && (
+                <div>
+                  <label htmlFor="baths" className="block text-sm font-medium text-gray-700">
+                    Bathrooms
+                  </label>
+                  <input
+                    type="number"
+                    id="baths"
+                    name="baths"
+                    required
+                    min="0"
+                    value={formData.baths}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  />
+                </div>
+              )}
 
               <div>
                 <label htmlFor="sqft" className="block text-sm font-medium text-gray-700">
