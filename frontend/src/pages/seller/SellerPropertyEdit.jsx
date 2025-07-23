@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import { backendurl } from "../../config";
 import { X, Upload } from 'lucide-react';
 
-const PROPERTY_TYPES = ['House', 'Apartment', 'Office', 'Villa','Shop','Flat','Farmhouse','Warehouse','Commercial Space','industrial Property'];
+const PROPERTY_TYPES = ['House', 'Apartment', 'Office', 'Villa','Shop','Plot','Flat','Farmhouse','Warehouse','Commercial Space','industrial Property'];
 const AVAILABILITY_TYPES = ['rent', 'buy'];
 const AMENITIES = [
   'Lake View', 'Fireplace', 'Central heating and air conditioning', 'Dock', 'Pool',

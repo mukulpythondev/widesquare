@@ -6,7 +6,7 @@ import { Upload, X } from 'lucide-react';
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 
-const PROPERTY_TYPES = ['House', 'Apartment', 'Office', 'Villa','Shop','Flat','Farmhouse','Warehouse','Commercial Space','industrial Property'];
+const PROPERTY_TYPES = ['House', 'Apartment', 'Office', 'Villa','Shop','Plot','Flat','Farmhouse','Warehouse','Commercial Space','industrial Property'];
 const AVAILABILITY_TYPES = ['rent', 'buy'];
 const AMENITIES = [
     'Lake View', 'Fireplace', 'Central heating and air conditioning', 'Dock', 'Pool',

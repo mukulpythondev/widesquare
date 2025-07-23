@@ -4,7 +4,7 @@ import axios from 'axios';
 import { backendurl } from "../../config";
 import { Upload, X } from 'lucide-react';
 
-const PROPERTY_TYPES = ['House', 'Apartment', 'Office', 'Villa','Shop','Flat','Farmhouse','Warehouse','Commercial Space','industrial Property'];
+const PROPERTY_TYPES = ['House', 'Apartment', 'Office', 'Villa','Plot','Shop','Flat','Farmhouse','Warehouse','Commercial Space','industrial Property'];
 const AVAILABILITY_TYPES = ['rent', 'buy'];
 const AMENITIES = ['Lake View', 'Fireplace', 'Central heating and air conditioning', 'Dock', 'Pool', 'Garage', 'Garden', 'Gym', 'Security system', 'Master bathroom', 'Guest bathroom', 'Home theater', 'Exercise room/gym', 'Covered parking', 'High-speed internet ready'];
 
