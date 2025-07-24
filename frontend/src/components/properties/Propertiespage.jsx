@@ -36,9 +36,10 @@ const PropertiesPage = () => {
       setPropertyState((prev) => ({ ...prev, loading: true }));
       const response = await axios.get(`${backendurl}/api/products/list`);
       if (response.data.success) {
+        // Defensive: ensure array
         setPropertyState((prev) => ({
           ...prev,
-          properties: response.data.property,
+          properties: Array.isArray(response.data.property) ? response.data.property : [],
           error: null,
           loading: false,
         }));
@@ -60,31 +61,45 @@ const PropertiesPage = () => {
   }, []);
 
   const filteredProperties = useMemo(() => {
-    return propertyState.properties
-      .filter((property) => property.status == "approved")
+    return (Array.isArray(propertyState.properties) ? propertyState.properties : [])
+      .filter((property) => property && property.status === "approved")
       .filter((property) => {
-        if (!property) return false; 
-        const searchMatch = !filters.searchQuery || 
+        if (!property) return false;
+        const searchMatch =
+          !filters.searchQuery ||
           [property.title, property.description, property.location]
-            .some(field => field?.toLowerCase().includes(filters.searchQuery.toLowerCase()));
+            .some((field) => field?.toLowerCase().includes(filters.searchQuery.toLowerCase()));
 
-        const typeMatch = !filters.propertyType || 
+        const typeMatch =
+          !filters.propertyType ||
           property.type?.toLowerCase() === filters.propertyType.toLowerCase();
 
-        const priceMatch = property.price >= filters.priceRange[0] && 
+        const priceMatch =
+          property.price >= filters.priceRange[0] &&
           property.price <= filters.priceRange[1];
 
-        const bedroomsMatch = !filters.bedrooms || filters.bedrooms === "0" || 
+        const bedroomsMatch =
+          !filters.bedrooms ||
+          filters.bedrooms === "0" ||
           property.beds >= parseInt(filters.bedrooms);
 
-        const bathroomsMatch = !filters.bathrooms || filters.bathrooms === "0" || 
+        const bathroomsMatch =
+          !filters.bathrooms ||
+          filters.bathrooms === "0" ||
           property.baths >= parseInt(filters.bathrooms);
 
-        const availabilityMatch = !filters.availability || 
+        const availabilityMatch =
+          !filters.availability ||
           property.availability?.toLowerCase() === filters.availability.toLowerCase();
 
-        return searchMatch && typeMatch && priceMatch && 
-          bedroomsMatch && bathroomsMatch && availabilityMatch;
+        return (
+          searchMatch &&
+          typeMatch &&
+          priceMatch &&
+          bedroomsMatch &&
+          bathroomsMatch &&
+          availabilityMatch
+        );
       })
       .sort((a, b) => {
         switch (filters.sortBy) {
@@ -101,16 +116,16 @@ const PropertiesPage = () => {
   }, [propertyState.properties, filters]);
 
   const handleFilterChange = (newFilters) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      ...newFilters
+      ...newFilters,
     }));
   };
 
   if (propertyState.loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center flex flex-col items-center"
@@ -119,18 +134,18 @@ const PropertiesPage = () => {
             {/* Main loader animation */}
             <motion.div
               className="w-24 h-24 bg-gray-100 rounded-2xl flex items-center justify-center relative shadow-lg"
-              animate={{ 
+              animate={{
                 rotate: [0, 0, 360, 360, 0],
                 scale: [1, 0.9, 0.9, 1, 1],
-                borderRadius: ["16%", "50%", "50%", "16%", "16%"]
+                borderRadius: ["16%", "50%", "50%", "16%", "16%"],
               }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             >
               <Home className="w-12 h-12 text-black" />
             </motion.div>
-            
+
             {/* Moving dots around the icon */}
-            <motion.div 
+            <motion.div
               className="absolute w-3 h-3 bg-gray-400 rounded-full right-4 bottom-10"
               animate={{
                 x: [0, 30, 0, -30, 0],
@@ -138,8 +153,8 @@ const PropertiesPage = () => {
               }}
               transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
             />
-            
-            <motion.div 
+
+            <motion.div
               className="absolute w-2 h-2 bg-gray-300 rounded-full"
               animate={{
                 x: [0, -30, 0, 30, 0],
@@ -147,36 +162,39 @@ const PropertiesPage = () => {
               }}
               transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
             />
-  
+
             {/* Background pulse effect */}
-            <div className="absolute inset-0 bg-gray-200 rounded-full animate-ping" style={{ animationDuration: '3s' }}></div>
+            <div
+              className="absolute inset-0 bg-gray-200 rounded-full animate-ping"
+              style={{ animationDuration: "3s" }}
+            ></div>
           </div>
-          
+
           <h3 className="text-2xl font-bold text-black mb-3">
             Loading Properties
           </h3>
-          
+
           <p className="text-gray-600 mb-5 max-w-xs text-center">
             {`We're finding the perfect properties that match your preferences...`}
           </p>
-          
+
           {/* Progress bar with animated gradient */}
           <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden relative">
             <motion.div
               className="h-full bg-gray-400 absolute top-0 left-0 right-0"
-              animate={{ 
+              animate={{
                 x: ["-100%", "100%"],
               }}
-              transition={{ 
+              transition={{
                 duration: 2,
                 repeat: Infinity,
-                ease: "linear"
+                ease: "linear",
               }}
             />
           </div>
-          
+
           <div className="flex items-center mt-4 text-xs text-black">
-            <motion.div 
+            <motion.div
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 1.5, repeat: Infinity }}
               className="w-1.5 h-1.5 bg-black rounded-full mr-2"
@@ -250,7 +268,7 @@ const PropertiesPage = () => {
             <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
               <div className="flex flex-col sm:flex-row items-center gap-4">
                 <SearchBar
-                  onSearch={(query) => setFilters(prev => ({ ...prev, searchQuery: query }))}
+                  onSearch={(query) => setFilters((prev) => ({ ...prev, searchQuery: query }))}
                   className="flex-1"
                   buttonClassName="bg-black text-white px-4 py-2 rounded-lg ml-2"
                 />
@@ -258,10 +276,12 @@ const PropertiesPage = () => {
                 <div className="flex items-center gap-4">
                   <select
                     value={filters.sortBy}
-                    onChange={(e) => setFilters(prev => ({
-                      ...prev,
-                      sortBy: e.target.value
-                    }))}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        sortBy: e.target.value,
+                      }))
+                    }
                     className="px-3 py-2 border rounded-lg text-sm text-black bg-white"
                   >
                     <option value="">Sort By</option>
@@ -272,17 +292,21 @@ const PropertiesPage = () => {
 
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => setViewState(prev => ({
-                        ...prev,
-                        showFilters: !prev.showFilters
-                      }))}
+                      onClick={() =>
+                        setViewState((prev) => ({
+                          ...prev,
+                          showFilters: !prev.showFilters,
+                        }))
+                      }
                       className="p-2 rounded-lg hover:bg-gray-100"
                       title="Toggle Filters"
                     >
                       <SlidersHorizontal className="w-5 h-5 text-black" />
                     </button>
                     <button
-                      onClick={() => setViewState(prev => ({ ...prev, isGridView: true }))}
+                      onClick={() =>
+                        setViewState((prev) => ({ ...prev, isGridView: true }))
+                      }
                       className={`p-2 rounded-lg ${
                         viewState.isGridView ? "bg-gray-200 text-black" : "hover:bg-gray-100"
                       }`}
@@ -290,7 +314,9 @@ const PropertiesPage = () => {
                       <Grid className="w-5 h-5 text-black" />
                     </button>
                     <button
-                      onClick={() => setViewState(prev => ({ ...prev, isGridView: false }))}
+                      onClick={() =>
+                        setViewState((prev) => ({ ...prev, isGridView: false }))
+                      }
                       className={`p-2 rounded-lg ${
                         !viewState.isGridView ? "bg-gray-200 text-black" : "hover:bg-gray-100"
                       }`}

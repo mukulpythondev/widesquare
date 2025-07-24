@@ -20,6 +20,28 @@ const PropertyCard = ({ property, viewType }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showControls, setShowControls] = useState(false);
 
+  // Defensive: always use arrays, never undefined
+  const images = Array.isArray(property.image)
+    ? property.image.filter(img => img && img.url)
+    : [];
+  let amenities = Array.isArray(property.amenities)
+    ? property.amenities
+    : [];
+
+  // --- Amenities parsing fallback for legacy data ---
+  if (
+    Array.isArray(amenities) &&
+    amenities.length === 1 &&
+    typeof amenities[0] === "string" &&
+    amenities[0].startsWith("[")
+  ) {
+    try {
+      amenities = JSON.parse(amenities[0]);
+    } catch {
+      // fallback to original
+    }
+  }
+
   const handleNavigateToDetails = () => {
     navigate(`/properties/single/${property._id}`);
   };
@@ -44,28 +66,14 @@ const PropertyCard = ({ property, viewType }) => {
 
   const handleImageNavigation = (e, direction) => {
     e.stopPropagation();
-    const imagesCount = property.image.length;
+    const imagesCount = images.length;
+    if (imagesCount === 0) return;
     if (direction === 'next') {
       setCurrentImageIndex((prev) => (prev + 1) % imagesCount);
     } else {
       setCurrentImageIndex((prev) => (prev - 1 + imagesCount) % imagesCount);
     }
   };
-
-  // --- Amenities parsing fallback for legacy data ---
-  let amenities = property.amenities;
-  if (
-    Array.isArray(amenities) &&
-    amenities.length === 1 &&
-    typeof amenities[0] === "string" &&
-    amenities[0].startsWith("[")
-  ) {
-    try {
-      amenities = JSON.parse(amenities[0]);
-    } catch {
-      // fallback to original
-    }
-  }
 
   return (
     <motion.div
@@ -87,10 +95,8 @@ const PropertyCard = ({ property, viewType }) => {
           <motion.img
             key={currentImageIndex}
             src={
-              property.image &&
-                property.image[currentImageIndex] &&
-                property.image[currentImageIndex].url
-                ? property.image[currentImageIndex].url
+              images.length > 0 && images[currentImageIndex]
+                ? images[currentImageIndex].url
                 : "/no-image.jpg"
             }
             alt={property.title}
@@ -103,7 +109,7 @@ const PropertyCard = ({ property, viewType }) => {
         </AnimatePresence>
 
         {/* Image Navigation Controls */}
-        {showControls && property.image.length > 1 && (
+        {showControls && images.length > 1 && (
           <div className="absolute inset-0 flex items-center justify-between px-2">
             <motion.button
               initial={{ opacity: 0 }}
@@ -127,9 +133,9 @@ const PropertyCard = ({ property, viewType }) => {
         )}
 
         {/* Image Indicators */}
-        {property.image.length > 1 && (
+        {images.length > 1 && (
           <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
-            {property.image.map((_, index) => (
+            {images.map((_, index) => (
               <div
                 key={index}
                 className={`w-1.5 h-1.5 rounded-full transition-all duration-300
