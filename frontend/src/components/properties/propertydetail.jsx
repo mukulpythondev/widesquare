@@ -53,6 +53,12 @@ const parseAmenities = (amenities) => {
   return [];
 };
 
+// --- FIX: Normalize images to array of objects with url ---
+const normalizeImages = (images) => {
+  if (!Array.isArray(images)) return [];
+  return images.map(img => typeof img === "string" ? { url: img } : img).filter(img => img && img.url);
+};
+
 const PropertyDetails = () => {
   const { id } = useParams();
   const [property, setProperty] = useState(null);
@@ -78,7 +84,8 @@ const PropertyDetails = () => {
           }
           setProperty({
             ...propertyData,
-            amenities: parseAmenities(propertyData.amenities)
+            amenities: parseAmenities(propertyData.amenities),
+            images: normalizeImages(propertyData.image)
           });
           setError(null);
         } else {
@@ -101,15 +108,15 @@ const PropertyDetails = () => {
   }, [id]);
 
   const handleKeyNavigation = useCallback((e) => {
-    if (!property) return;
+    if (!property || !property.images) return;
     if (e.key === 'ArrowLeft') {
-      setActiveImage(prev => (prev === 0 ? property.image.length - 1 : prev - 1));
+      setActiveImage(prev => (prev === 0 ? property.images.length - 1 : prev - 1));
     } else if (e.key === 'ArrowRight') {
-      setActiveImage(prev => (prev === property.image.length - 1 ? 0 : prev + 1));
+      setActiveImage(prev => (prev === property.images.length - 1 ? 0 : prev + 1));
     } else if (e.key === 'Escape' && showSchedule) {
       setShowSchedule(false);
     }
-  }, [property?.image?.length, showSchedule]);
+  }, [property?.images?.length, showSchedule]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyNavigation);
@@ -259,10 +266,8 @@ const PropertyDetails = () => {
               <motion.img
                 key={activeImage}
                 src={
-                  property.image &&
-                    property.image[activeImage] &&
-                    property.image[activeImage].url
-                    ? property.image[activeImage].url
+                  property.images && property.images[activeImage]
+                    ? property.images[activeImage].url
                     : "/no-image.jpg"
                 }
                 alt={`${property.title} - View ${activeImage + 1}`}
@@ -275,11 +280,11 @@ const PropertyDetails = () => {
             </AnimatePresence>
 
             {/* Image Navigation */}
-            {property.image && property.image.length > 1 && (
+            {property.images && property.images.length > 1 && (
               <>
                 <button
                   onClick={() => setActiveImage(prev =>
-                    prev === 0 ? property.image.length - 1 : prev - 1
+                    prev === 0 ? property.images.length - 1 : prev - 1
                   )}
                   className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full
                     bg-white/80 backdrop-blur-sm hover:bg-white transition-colors"
@@ -288,7 +293,7 @@ const PropertyDetails = () => {
                 </button>
                 <button
                   onClick={() => setActiveImage(prev =>
-                    prev === property.image.length - 1 ? 0 : prev + 1
+                    prev === property.images.length - 1 ? 0 : prev + 1
                   )}
                   className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full
                     bg-white/80 backdrop-blur-sm hover:bg-white transition-colors"
@@ -301,7 +306,7 @@ const PropertyDetails = () => {
             {/* Image Counter */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 
               bg-black/70 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm">
-              {property.image ? activeImage + 1 : 0} / {property.image ? property.image.length : 0}
+              {property.images ? activeImage + 1 : 0} / {property.images ? property.images.length : 0}
             </div>
           </div>
 

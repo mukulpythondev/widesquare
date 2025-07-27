@@ -19,6 +19,12 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { backendurl } from "../../config";
 
+// --- FIX: Normalize images to array of objects with url ---
+const normalizeImages = (images) => {
+  if (!Array.isArray(images)) return [];
+  return images.map(img => typeof img === "string" ? { url: img } : img).filter(img => img && img.url);
+};
+
 const PropertyListings = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +39,8 @@ const PropertyListings = () => {
       if (response.data.success) {
         const parsedProperties = response.data.property.map(property => ({
           ...property,
-          amenities: parseAmenities(property.amenities)
+          amenities: parseAmenities(property.amenities),
+          image: normalizeImages(property.image) // <-- FIX: normalize images here
         }));
         setProperties(parsedProperties);
       } else {
@@ -46,7 +53,6 @@ const PropertyListings = () => {
       setLoading(false);
     }
   };
-
 
   const parseAmenities = (amenities) => {
     if (!amenities) return [];
@@ -138,7 +144,6 @@ const PropertyListings = () => {
             </p>
           </div>
 
-
           <div className="flex gap-2">
             <Link
               to="/admin/property-requests"
@@ -227,6 +232,7 @@ const PropertyListings = () => {
                   <img
                     src={
                       property.image &&
+                        property.image.length > 0 &&
                         property.image[0] &&
                         property.image[0].url
                         ? property.image[0].url
