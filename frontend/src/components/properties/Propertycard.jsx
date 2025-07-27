@@ -21,8 +21,9 @@ const PropertyCard = ({ property, viewType }) => {
   const [showControls, setShowControls] = useState(false);
 
   // Defensive: always use arrays, never undefined
+  // FIX: Support both array of strings and array of objects
   const images = Array.isArray(property.image)
-    ? property.image.filter(img => img && img.url)
+    ? property.image.map(img => typeof img === "string" ? { url: img } : img).filter(img => img && img.url)
     : [];
   let amenities = Array.isArray(property.amenities)
     ? property.amenities

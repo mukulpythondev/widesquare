@@ -57,10 +57,19 @@ const sampleProperties = [
   }
 ];
 
+// --- FIX: Normalize images to array of objects with url ---
+const normalizeImages = (images) => {
+  if (!Array.isArray(images)) return [];
+  return images.map(img => typeof img === "string" ? { url: img } : img).filter(img => img && img.url);
+};
+
 const PropertyCard = ({ property }) => {
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+
+  // Fix: Normalize images for display
+  const images = normalizeImages(property.image);
 
   const handleNavigate = () => {
     navigate(`/properties/single/${property._id}`);
@@ -86,7 +95,7 @@ const PropertyCard = ({ property }) => {
       {/* Property Image */}
       <div className="relative h-64">
         <img
-          src={property.image && property.image[0] && property.image[0].url ? property.image[0].url : "/no-image.jpg"}
+          src={images.length > 0 ? images[0].url : "/no-image.jpg"}
           alt={property.title}
           className="w-full h-full object-cover"
         />
@@ -192,7 +201,7 @@ const PropertiesShow = () => {
     { id: 'apartment', label: 'Apartments' },
     { id: 'villa', label: 'Villas' },
     { id: 'plot', label: 'Plots' },
-    { id: 'Office', label: 'Office' },
+    { id: 'office', label: 'Office' },
     { id: 'Shop', label: 'Shops' },
     { id: 'Commercial Space', label: 'Commercial' },
   ];
@@ -228,7 +237,10 @@ const PropertiesShow = () => {
 
         if (response.data.success) {
           // Take only the first 6 properties for featured section
-          const featuredProperties = response.data.property.slice(0, 6);
+          const featuredProperties = response.data.property.slice(0, 6).map(p => ({
+            ...p,
+            image: normalizeImages(p.image)
+          }));
           setProperties(featuredProperties);
         } else {
           setError('Failed to fetch properties');
@@ -396,3 +408,4 @@ PropertyCard.propTypes = {
 };
 
 export default PropertiesShow;
+// ...existing
