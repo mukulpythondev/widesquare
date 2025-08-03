@@ -226,10 +226,8 @@ const PropertyListings = () => {
                 <div className="relative h-48">
                   <img
                     src={
-                      property.image &&
-                        property.image[0] &&
-                        property.image[0].url
-                        ? property.image[0].url
+                        property.image[0]
+                        ? property.image[0]
                         : "/placeholder.jpg"
                     }
                     alt={property.title}

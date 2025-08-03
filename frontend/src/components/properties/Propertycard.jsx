@@ -20,10 +20,28 @@ const PropertyCard = ({ property, viewType }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showControls, setShowControls] = useState(false);
 
-  // Defensive: always use arrays, never undefined
-  const images = Array.isArray(property.image)
-    ? property.image.filter(img => img && img.url)
-    : [];
+  // Handle both old format (property.image) and new format (property.imageUrls)
+  const getImages = () => {
+    // Check for new format first (imageUrls from Cloudinary)
+    if (Array.isArray(property.imageUrls) && property.imageUrls.length > 0) {
+      return property.imageUrls;
+    }
+    
+    // Fallback to old format (image array with objects)
+    if (Array.isArray(property.image) && property.image.length > 0) {
+      // If it's an array of objects with url property
+      if (typeof property.image[0] === 'object' && property.image[0].url) {
+        return property.image.map(img => img.url);
+      }
+      // If it's already an array of URLs
+      return property.image;
+    }
+    
+    return [];
+  };
+
+  const images = getImages();
+
   let amenities = Array.isArray(property.amenities)
     ? property.amenities
     : [];
@@ -75,6 +93,15 @@ const PropertyCard = ({ property, viewType }) => {
     }
   };
 
+  // Get current image URL
+  const getCurrentImageUrl = () => {
+    if (images.length === 0) return "/no-image.jpg";
+    
+    const currentImage = images[currentImageIndex];
+    // Handle both string URLs and object with url property
+    return typeof currentImage === 'string' ? currentImage : currentImage?.url || "/no-image.jpg";
+  };
+
   return (
     <motion.div
       layout
@@ -94,17 +121,17 @@ const PropertyCard = ({ property, viewType }) => {
         <AnimatePresence mode="wait">
           <motion.img
             key={currentImageIndex}
-            src={
-              images.length > 0 && images[currentImageIndex]
-                ? images[currentImageIndex].url
-                : "/no-image.jpg"
-            }
+            src={getCurrentImageUrl()}
             alt={property.title}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className="w-full h-full object-cover rounded-t-xl rounded-b-none"
+            onError={(e) => {
+              console.error(`Failed to load image: ${e.target.src}`);
+              e.target.src = "/no-image.jpg";
+            }}
           />
         </AnimatePresence>
 
@@ -208,34 +235,48 @@ const PropertyCard = ({ property, viewType }) => {
           </div>
         </div>
 
-        {/* Property Features */}
-        <div className="grid grid-cols-3 gap-3 mt-6">
-          <div className="flex flex-col items-center gap-1 bg-gray-100 p-2 rounded-lg">
-            <BedDouble className="w-5 h-5 text-black" />
-            <span className="text-sm font-medium text-black">
-              {property.beds} {property.beds > 1 ? 'Beds' : 'Bed'}
-            </span>
+        {/* Property Features - Only show if not Plot */}
+        {property.type !== 'Plot' && property.beds && property.baths && (
+          <div className="grid grid-cols-3 gap-3 mt-6">
+            <div className="flex flex-col items-center gap-1 bg-gray-100 p-2 rounded-lg">
+              <BedDouble className="w-5 h-5 text-black" />
+              <span className="text-sm font-medium text-black">
+                {property.beds} {property.beds > 1 ? 'Beds' : 'Bed'}
+              </span>
+            </div>
+            <div className="flex flex-col items-center gap-1 bg-gray-100 p-2 rounded-lg">
+              <Bath className="w-5 h-5 text-black" />
+              <span className="text-sm font-medium text-black">
+                {property.baths} {property.baths > 1 ? 'Baths' : 'Bath'}
+              </span>
+            </div>
+            <div className="flex flex-col items-center gap-1 bg-gray-100 p-2 rounded-lg">
+              <Maximize className="w-5 h-5 text-black" />
+              <span className="text-sm font-medium text-black">
+                {property.sqft} sqft
+              </span>
+            </div>
           </div>
-          <div className="flex flex-col items-center gap-1 bg-gray-100 p-2 rounded-lg">
-            <Bath className="w-5 h-5 text-black" />
-            <span className="text-sm font-medium text-black">
-              {property.baths} {property.baths > 1 ? 'Baths' : 'Bath'}
-            </span>
+        )}
+
+        {/* For plots, show only area */}
+        {property.type === 'Plot' && (
+          <div className="flex justify-center mt-6">
+            <div className="flex flex-col items-center gap-1 bg-gray-100 p-3 rounded-lg min-w-[100px]">
+              <Maximize className="w-5 h-5 text-black" />
+              <span className="text-sm font-medium text-black">
+                {property.sqft} sqft
+              </span>
+            </div>
           </div>
-          <div className="flex flex-col items-center gap-1 bg-gray-100 p-2 rounded-lg">
-            <Maximize className="w-5 h-5 text-black" />
-            <span className="text-sm font-medium text-black">
-              {property.sqft} sqft
-            </span>
-          </div>
-        </div>
+        )}
 
         {/* Amenities */}
         {amenities && amenities.length > 0 && (
           <div className="mt-4">
             <p className="text-xs text-black mb-1 font-medium">Amenities:</p>
             <div className="flex flex-wrap gap-2">
-              {amenities.map((amenity, idx) => (
+              {amenities.slice(0, 5).map((amenity, idx) => (
                 <span
                   key={idx}
                   className="bg-gray-200 text-black px-2 py-1 rounded text-xs"
@@ -243,6 +284,11 @@ const PropertyCard = ({ property, viewType }) => {
                   {amenity}
                 </span>
               ))}
+              {amenities.length > 5 && (
+                <span className="bg-gray-300 text-black px-2 py-1 rounded text-xs">
+                  +{amenities.length - 5} more
+                </span>
+              )}
             </div>
           </div>
         )}

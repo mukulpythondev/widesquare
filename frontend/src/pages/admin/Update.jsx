@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { backendurl } from "../../config";
 import { X, Upload } from 'lucide-react';
-
+import { uploadToCloudinary } from '../../lib/cloudinaryUpload';
 const PROPERTY_TYPES = ['House', 'Apartment', 'Office', 'Villa', 'Plot', 'Shop', 'Flat', 'Farmhouse', 'Warehouse', 'Commercial Space', 'industrial Property'];
 const AVAILABILITY_TYPES = ['rent', 'buy'];
 const AMENITIES = ['Lake View', 'Fireplace', 'Central heating and air conditioning', 'Dock', 'Pool', 'Garage', 'Garden', 'Gym', 'Security system', 'Master bathroom', 'Guest bathroom', 'Home theater', 'Exercise room/gym', 'Covered parking', 'High-speed internet ready'];
@@ -16,7 +16,7 @@ const Update = () => {
     title: '',
     type: '',
     price: '',
-    location: '',
+    location: '', 
     description: '',
     beds: '',
     baths: '',
@@ -24,10 +24,11 @@ const Update = () => {
     phone: '',
     availability: '',
     amenities: [],
-    images: []
+    imageUrls: [] // Changed from images to imageUrls for Cloudinary
   });
   const [previewUrls, setPreviewUrls] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState(false);
 
   // Check if selected type should show beds/baths
   const shouldShowBedsAndBaths = () => {
@@ -41,6 +42,12 @@ const Update = () => {
 
         if (response.data.success) {
           const property = response.data.property;
+          
+          // Extract URLs from the existing image structure
+          const existingImageUrls = Array.isArray(property.image)
+            ? property.image.filter(Boolean)
+            : [];
+
           setFormData({
             title: property.title,
             type: property.type,
@@ -53,16 +60,14 @@ const Update = () => {
             phone: property.phone,
             availability: property.availability,
             amenities: property.amenities,
-            images: property.image
+            imageUrls: existingImageUrls // Store URLs directly
           });
-          setPreviewUrls(Array.isArray(property.image)
-            ? property.image.map(img => img && img.url ? img.url : "/no-image.jpg")
-            : []);
+          
+          setPreviewUrls(existingImageUrls);
         } else {
           toast.error(response.data.message);
         }
       } catch (error) {
-        console.log('Error fetching property:', error); // Log the error
         toast.error('An error occurred. Please try again.');
       }
     };
@@ -96,58 +101,137 @@ const Update = () => {
     }));
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const files = Array.from(e.target.files);
-    setPreviewUrls(files.map((file) => URL.createObjectURL(file)));
-    setFormData((prev) => ({
-      ...prev,
-      images: files
-    }));
+
+    if (files.length === 0) return;
+
+    if (files.length + previewUrls.length > 4) {
+      toast.error('Maximum 4 images allowed');
+      return;
+    }
+
+    // Validate file types and sizes
+    const validFiles = files.filter(file => {
+      const isValidType = file.type.startsWith('image/');
+      const isValidSize = file.size <= 10 * 1024 * 1024; // 10MB
+      
+      if (!isValidType) {
+        toast.error(`${file.name} is not a valid image file`);
+        return false;
+      }
+      if (!isValidSize) {
+        toast.error(`${file.name} is too large. Maximum size is 10MB`);
+        return false;
+      }
+      return true;
+    });
+
+    if (validFiles.length === 0) return;
+
+    setUploadingImages(true);
+    const uploadedUrls = [];
+    
+    try {
+      // Upload images sequentially to avoid overwhelming the service
+      for (let i = 0; i < validFiles.length; i++) {
+        const file = validFiles[i];
+        
+        try {
+          const url = await uploadToCloudinary(file);
+          
+          if (url) {
+            uploadedUrls.push(url);
+            // Update preview immediately for better UX
+            setPreviewUrls(prev => [...prev, url]);
+          } else {
+            throw new Error('No URL returned from upload');
+          }
+        } catch (fileError) {
+          console.error(`Failed to upload ${file.name}:`, fileError);
+          toast.error(`Failed to upload ${file.name}`);
+        }
+      }
+
+      // Update form data with all successfully uploaded images
+      if (uploadedUrls.length > 0) {
+        setFormData(prev => {
+          const updatedImageUrls = [...prev.imageUrls, ...uploadedUrls];
+          return {
+            ...prev, 
+            imageUrls: updatedImageUrls
+          };
+        });
+        
+        toast.success(`${uploadedUrls.length} image(s) uploaded successfully`);
+      }
+
+    } catch (err) {
+      console.error("Image upload process failed:", err);
+      toast.error('Image upload failed. Please try again.');
+    } finally {
+      setUploadingImages(false);
+      // Reset file input
+      e.target.value = '';
+    }
   };
 
   const removeImage = (index) => {
     setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
     setFormData((prev) => ({
       ...prev,
-      images: prev.images.filter((_, i) => i !== index)
+      imageUrls: prev.imageUrls.filter((_, i) => i !== index)
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validation
+    if (formData.imageUrls.length === 0) {
+      toast.error('Please upload at least one image');
+      return;
+    }
+    
+    if (shouldShowBedsAndBaths() && (!formData.beds || !formData.baths)) {
+      toast.error('Please fill in bedrooms and bathrooms');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const formdata = new FormData();
-      formdata.append('id', id);
-      formdata.append('title', formData.title);
-      formdata.append('type', formData.type);
-      formdata.append('price', formData.price);
-      formdata.append('location', formData.location);
-      formdata.append('description', formData.description);
+      // Prepare payload - send imageUrls as image field for backend compatibility
+      const payload = {
+        id: id,
+        title: formData.title,
+        type: formData.type,
+        price: parseFloat(formData.price),
+        location: formData.location,
+        description: formData.description,
+        beds: formData.beds ? parseInt(formData.beds) : null,
+        baths: formData.baths ? parseInt(formData.baths) : null,
+        sqft: parseFloat(formData.sqft),
+        phone: formData.phone,
+        availability: formData.availability,
+        amenities: formData.amenities,
+        image: formData.imageUrls // Send URLs instead of files
+      };
 
-      // Only add beds/baths if not Plot type
-      if (shouldShowBedsAndBaths()) {
-        formdata.append('beds', formData.beds);
-        formdata.append('baths', formData.baths);
-      }
 
-      formdata.append('sqft', formData.sqft);
-      formdata.append('phone', formData.phone);
-      formdata.append('availability', formData.availability);
-      formdata.append('amenities', JSON.stringify(formData.amenities));
-      formData.images.forEach((image, index) => {
-        formdata.append(`image${index + 1}`, image);
-      });
 
-      const response = await axios.post(`${backendurl}/api/products/update`, formdata,
+      const response = await axios.post(
+        `${backendurl}/api/products/update`, 
+        payload,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json", // Changed from multipart/form-data
           },
+          timeout: 30000 // 30 second timeout
         }
       );
+
       if (response.data.success) {
         toast.success('Property updated successfully');
         navigate('/admin/list');
@@ -155,12 +239,20 @@ const Update = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.log(error);
-      toast.error('An error occurred. Please try again.');
+      console.error('Submit error:', error);
+      if (error.code === 'ECONNABORTED') {
+        toast.error('Request timeout. Please try again.');
+      } else if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('An error occurred. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  const isDisabled = loading || uploadingImages;
 
   return (
     <div className="min-h-screen pt-32 px-4 bg-gray-50">
@@ -181,6 +273,7 @@ const Update = () => {
                 required
                 value={formData.title}
                 onChange={handleInputChange}
+                disabled={isDisabled}
                 className="mt-1 block w-full rounded-md border border-gray-100 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
@@ -195,6 +288,7 @@ const Update = () => {
                 required
                 value={formData.description}
                 onChange={handleInputChange}
+                disabled={isDisabled}
                 rows={3}
                 className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
@@ -211,6 +305,7 @@ const Update = () => {
                   required
                   value={formData.type}
                   onChange={handleInputChange}
+                  disabled={isDisabled}
                   className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 >
                   <option value="">Select Type</option>
@@ -232,6 +327,7 @@ const Update = () => {
                   required
                   value={formData.availability}
                   onChange={handleInputChange}
+                  disabled={isDisabled}
                   className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 >
                   <option value="">Select Availability</option>
@@ -257,6 +353,7 @@ const Update = () => {
                   min="0"
                   value={formData.price}
                   onChange={handleInputChange}
+                  disabled={isDisabled}
                   className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
               </div>
@@ -272,6 +369,7 @@ const Update = () => {
                   required
                   value={formData.location}
                   onChange={handleInputChange}
+                  disabled={isDisabled}
                   className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
               </div>
@@ -292,6 +390,7 @@ const Update = () => {
                     min="0"
                     value={formData.beds}
                     onChange={handleInputChange}
+                    disabled={isDisabled}
                     className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
@@ -311,6 +410,7 @@ const Update = () => {
                     min="0"
                     value={formData.baths}
                     onChange={handleInputChange}
+                    disabled={isDisabled}
                     className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
@@ -328,6 +428,7 @@ const Update = () => {
                   min="0"
                   value={formData.sqft}
                   onChange={handleInputChange}
+                  disabled={isDisabled}
                   className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
               </div>
@@ -344,6 +445,7 @@ const Update = () => {
                 required
                 value={formData.phone}
                 onChange={handleInputChange}
+                disabled={isDisabled}
                 className="mt-1 block w-full rounded-md border border-gray-100 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
@@ -360,10 +462,11 @@ const Update = () => {
                   key={amenity}
                   type="button"
                   onClick={() => handleAmenityToggle(amenity)}
+                  disabled={isDisabled}
                   className={`px-4 py-2 rounded-md text-sm font-medium ${formData.amenities.includes(amenity)
                     ? 'bg-indigo-600 text-white'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    }`}
+                    } ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   {amenity}
                 </button>
@@ -387,7 +490,8 @@ const Update = () => {
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
-                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                    disabled={isDisabled}
+                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 disabled:opacity-50"
                   >
                     <X size={16} />
                   </button>
@@ -399,8 +503,8 @@ const Update = () => {
                 <div className="space-y-1 text-center">
                   <Upload className="mx-auto h-12 w-12 text-gray-400" />
                   <div className="flex text-sm text-gray-600">
-                    <label htmlFor="images" className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-                      <span>Upload images</span>
+                    <label htmlFor="images" className={`relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500 ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                      <span>{uploadingImages ? 'Uploading...' : 'Upload images'}</span>
                       <input
                         id="images"
                         name="images"
@@ -408,6 +512,7 @@ const Update = () => {
                         multiple
                         accept="image/*"
                         onChange={handleImageChange}
+                        disabled={isDisabled}
                         className="sr-only"
                       />
                     </label>
@@ -422,10 +527,10 @@ const Update = () => {
           <div>
             <button
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              disabled={loading}
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isDisabled}
             >
-              {loading ? 'Updating...' : 'Update Property'}
+              {loading ? 'Updating...' : uploadingImages ? 'Uploading Images...' : 'Update Property'}
             </button>
           </div>
         </form>

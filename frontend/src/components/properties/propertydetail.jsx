@@ -259,10 +259,8 @@ const PropertyDetails = () => {
               <motion.img
                 key={activeImage}
                 src={
-                  property.image &&
-                    property.image[activeImage] &&
-                    property.image[activeImage].url
-                    ? property.image[activeImage].url
+                  property.image[activeImage]
+                    ? property.image[activeImage]
                     : "/no-image.jpg"
                 }
                 alt={`${property.title} - View ${activeImage + 1}`}
