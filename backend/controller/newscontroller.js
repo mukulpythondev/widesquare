@@ -1,8 +1,7 @@
 import News from "../models/newsmodel.js";
-import nodemailer from "nodemailer";
 import dotenv from "dotenv";
-import transporter from "../config/nodemailer.js";
-import { getEmailTemplate } from "../email.js";
+import { getEmailTemplate, getNewsletterTemplate } from "../email.js";
+import { sendEmail } from "../services/sendEmail.js";
 
 const submitNewsletter = async (req, res) => {
   try {
@@ -14,14 +13,12 @@ const submitNewsletter = async (req, res) => {
 
     const savedNewsletter = await newNewsletter.save();
 
-    const mailOptions = {
-      from: process.env.EMAIL,
+    
+    await sendEmail({
       to: email,
       subject: "Welcome to BuildEstate Newsletter! 🏠",
       html: getNewsletterTemplate(email),
-    };
-
-    await transporter.sendMail(mailOptions);
+    });
 
     res.json({ message: "Newsletter submitted successfully" });
   } catch (error) {

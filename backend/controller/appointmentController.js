@@ -2,8 +2,8 @@ import Stats from "../models/statsModel.js";
 import Property from "../models/propertymodel.js";
 import Appointment from "../models/appointmentModel.js";
 import User from "../models/Usermodel.js";
-import transporter from "../config/nodemailer.js";
 import { getSchedulingEmailTemplate, getEmailTemplate } from "../email.js";
+import { sendEmail } from "../services/sendEmail.js";
 
 // Format helpers
 const formatRecentProperties = (properties) => {
@@ -265,17 +265,15 @@ export const scheduleViewing = async (req, res) => {
     const adminEmail = process.env.ADMIN_EMAILS;
     const agentEmail = property.agent?.email;
     const mailTo = [adminEmail, agentEmail].filter(Boolean).join(",");
-    const mailOptions = {
-      from: process.env.SMTP_USER,
-      to: mailTo,
-      subject: "New Property Enquiry",
-      text: `New enquiry for property: ${property.title}
-Date: ${date}
-Time: ${time}
-${isGuest ? `Name: ${name}\nEmail: ${email}\nPhone: ${phone}` : ""}
-Notes: ${notes || "None"}`,
-    };
-    await transporter.sendMail(mailOptions);
+    await sendEmail({
+  to: mailTo,
+  subject: "New Property Enquiry",
+  text: `New enquiry for property: ${property.title}
+Name: ${name}
+Email: ${email}
+Phone: ${phone}`,
+});
+
 
     res.status(201).json({
       success: true,
@@ -321,33 +319,27 @@ export const cancelAppointment = async (req, res) => {
     await appointment.save();
 
     // Send cancellation email
-    const mailOptions = {
-      from: process.env.EMAIL,
-      to: appointment.userId.email,
-      subject: "Appointment Cancelled - BuildEstate",
-      html: `
-        <div style="max-width: 600px; margin: 20px auto; padding: 30px; background: #ffffff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-          <h1 style="color: #2563eb; text-align: center;">Appointment Cancelled</h1>
-          <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p>Your viewing appointment for <strong>${
-              appointment.propertyId.title
-            }</strong> has been cancelled.</p>
-            <p><strong>Date:</strong> ${new Date(
-              appointment.date
-            ).toLocaleDateString()}</p>
-            <p><strong>Time:</strong> ${appointment.time}</p>
-            ${
-              appointment.cancelReason
-                ? `<p><strong>Reason:</strong> ${appointment.cancelReason}</p>`
-                : ""
-            }
-          </div>
-          <p style="color: #4b5563;">You can schedule another viewing at any time.</p>
-        </div>
-      `,
-    };
+    await sendEmail({
+  to: appointment.userId.email,
+  subject: "Appointment Cancelled - BuildEstate",
+  html: `
+    <div style="max-width: 600px; margin: 20px auto; padding: 30px; background: #ffffff; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+      <h1 style="color: #2563eb; text-align: center;">Appointment Cancelled</h1>
+      <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <p>Your viewing appointment for <strong>${appointment.propertyId.title}</strong> has been cancelled.</p>
+        <p><strong>Date:</strong> ${new Date(appointment.date).toLocaleDateString()}</p>
+        <p><strong>Time:</strong> ${appointment.time}</p>
+        ${
+          appointment.cancelReason
+            ? `<p><strong>Reason:</strong> ${appointment.cancelReason}</p>`
+            : ""
+        }
+      </div>
+      <p style="color: #4b5563;">You can schedule another viewing at any time.</p>
+    </div>
+  `,
+});
 
-    await transporter.sendMail(mailOptions);
 
     res.json({
       success: true,
@@ -400,11 +392,10 @@ export const updateAppointmentMeetingLink = async (req, res) => {
     }
 
     // Send email notification with meeting link
-    const mailOptions = {
-      from: process.env.EMAIL,
+    await sendEmail({
       to: appointment.userId.email,
       subject: "Meeting Link Updated - BuildEstate",
-      html: `
+       html: `
         <div style="max-width: 600px; margin: 20px auto; font-family: 'Arial', sans-serif; line-height: 1.6;">
           <div style="background: linear-gradient(135deg, #2563eb, #1e40af); padding: 40px 20px; border-radius: 15px 15px 0 0; text-align: center;">
             <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">Meeting Link Updated</h1>
@@ -426,10 +417,8 @@ export const updateAppointmentMeetingLink = async (req, res) => {
             </div>
           </div>
         </div>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
+      `
+      })
 
     res.json({
       success: true,
@@ -584,16 +573,15 @@ export const guestEnquiry = async (req, res) => {
     const adminEmail = process.env.ADMIN_EMAILS;
     const agentEmail = property.assignedAgent?.email;
     const mailTo = [adminEmail, agentEmail].filter(Boolean).join(",");
-    const mailOptions = {
-      from: process.env.SMTP_USER,
-      to: mailTo,
-      subject: "New Property Enquiry",
-      text: `New enquiry for property: ${property.title}
-Name: ${name}
-Email: ${email}
-Phone: ${phone}`,
-    };
-    await transporter.sendMail(mailOptions);
+    await sendEmail({
+  to: mailTo,
+  subject: "New Property Enquiry",
+  text: `New enquiry for property: ${property.title}
+Date: ${date}
+Time: ${time}
+Notes: ${notes || "None"}`,
+});
+
 
     res.status(201).json({
       success: true,

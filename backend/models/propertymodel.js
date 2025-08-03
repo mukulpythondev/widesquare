@@ -6,10 +6,7 @@ const propertySchema = new mongoose.Schema(
     location: { type: String, required: true },
     price: { type: Number, required: true },
     image: [
-      {
-        url: { type: String, required: true },
-        fileId: { type: String, required: true }
-      }
+      { type: String, required: true },
     ],
     beds: { type: Number },
     baths: { type: Number },

@@ -2,7 +2,7 @@ import servicemodel from "../models/serviceModel.js";
 import ServiceEnquiry from "../models/serviceEnqueryModel.js";
 import imagekit from "../config/imagekit.js";
 import fs from "fs";
-import transporter from "../config/nodemailer.js";
+import { sendEmail } from "../services/sendEmail.js";
 
 export const addService = async (req, res) => {
   try {
@@ -92,19 +92,18 @@ export const serviceEnquiry = async (req, res) => {
     const service = await servicemodel.findById(serviceId);
 
     // Send email to admin
-    await transporter.sendMail({
-      from: process.env.ADMIN_EMAILS,
-      to: process.env.ADMIN_EMAILS, // or process.env.ADMIN_EMAILS if you have multiple, comma-separated
-      subject: "New Service Enquiry Received",
-      html: `
-        <h2>New Service Enquiry</h2>
-        <p><strong>Service:</strong> ${service ? service.title : serviceId}</p>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
-        <p><strong>Message:</strong> ${message || "N/A"}</p>
-      `,
-    });
+   await sendEmail({
+  to: process.env.ADMIN_EMAILS, // supports comma-separated emails
+  subject: "New Service Enquiry Received",
+  html: `
+    <h2>New Service Enquiry</h2>
+    <p><strong>Service:</strong> ${service ? service.title : serviceId}</p>
+    <p><strong>Name:</strong> ${name}</p>
+    <p><strong>Email:</strong> ${email}</p>
+    <p><strong>Phone:</strong> ${phone}</p>
+    <p><strong>Message:</strong> ${message || "N/A"}</p>
+  `,
+});
 
     res.json({ success: true, message: "Enquiry submitted" });
   } catch (err) {

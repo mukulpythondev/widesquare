@@ -2,8 +2,8 @@ import Stats from "../models/statsModel.js";
 import Property from "../models/propertymodel.js";
 import Appointment from "../models/appointmentModel.js";
 import User from "../models/Usermodel.js";
-import transporter from "../config/nodemailer.js";
 import { getEmailTemplate } from "../email.js";
+import { sendEmail } from "../services/sendEmail.js";
 
 const formatRecentProperties = (properties) => {
   return properties.map((property) => ({
@@ -203,17 +203,13 @@ export const updateAppointmentStatus = async (req, res) => {
       });
     }
 
-    // Send email notification using the template from email.js
-    const mailOptions = {
-      from: process.env.SMTP_USER,
-      to: appointment.userId.email,
-      subject: `Viewing Appointment ${
-        status.charAt(0).toUpperCase() + status.slice(1)
-      } - BuildEstate`,
-      html: getEmailTemplate(appointment, status),
-    };
-
-    await transporter.sendMail(mailOptions);
+    await sendEmail({
+  to: appointment.userId.email,
+  subject: `Viewing Appointment ${
+    status.charAt(0).toUpperCase() + status.slice(1)
+  } - BuildEstate`,
+  html: getEmailTemplate(appointment, status),
+});
 
     res.json({
       success: true,
@@ -257,12 +253,11 @@ export const approveAgent = async (req, res) => {
     await user.save();
 
     // Notify user
-    await transporter.sendMail({
-      from: process.env.SMTP_USER,
-      to: user.email,
-      subject: "Agent Application Approved",
-      html: `<p>Congratulations! Your agent application has been approved.</p>`,
-    });
+    await sendEmail({
+  to: user.email,
+  subject: 'Agent Application Approved',
+  html: `<p>Congratulations! Your agent application has been approved.</p>`,
+});
 
     res.json({ success: true, message: "Agent approved" });
   } catch (error) {
@@ -281,12 +276,11 @@ export const rejectAgent = async (req, res) => {
     await user.save();
 
     // Notify user
-    await transporter.sendMail({
-      from: process.env.SMTP_USER,
-      to: user.email,
-      subject: "Agent Application Rejected",
-      html: `<p>Sorry, your agent application was not approved at this time.</p>`,
-    });
+    await sendEmail({
+  to: user.email,
+  subject: 'Agent Application Rejected',
+  html: `<p>Sorry, your agent application was not approved at this time.</p>`,
+});
 
     res.json({ success: true, message: "Agent request rejected" });
   } catch (error) {
@@ -358,12 +352,11 @@ export const approveProperty = async (req, res) => {
 
     // Notify seller (agent or normal user)
     if (property.seller && property.seller.email) {
-      await transporter.sendMail({
-        from: process.env.SMTP_USER,
-        to: property.seller.email,
-        subject: "Property Approved",
-        html: `<p>Your property "${property.title}" has been approved and is now live on the website.</p>`,
-      });
+      await sendEmail({
+  to: property.seller.email,
+  subject: 'Property Approved',
+  html: `<p>Your property "${property.title}" has been approved and is now live on the website.</p>`,
+});
     }
 
     res
@@ -391,12 +384,11 @@ export const rejectProperty = async (req, res) => {
 
     // Notify seller (agent or normal user)
     if (property.seller && property.seller.email) {
-      await transporter.sendMail({
-        from: process.env.SMTP_USER,
-        to: property.seller.email,
-        subject: "Property Rejected",
-        html: `<p>Your property "${property.title}" was not approved by admin.</p>`,
-      });
+      await sendEmail({
+  to: property.seller.email,
+  subject: 'Property Rejected',
+  html: `<p>Your property "${property.title}" was not approved by admin.</p>`,
+});
     }
 
     res.status(200).json({ success: true, message: "Property rejected" });

@@ -8,7 +8,6 @@ import {
   getPendingProperties,
   myProperties,
 } from "../controller/productcontroller.js";
-import upload from "../middleware/multer.js";
 import { isAdmin, protect } from "../middleware/authmiddleware.js";
 import { approveProperty, assignedProperties, rejectProperty } from "../controller/adminController.js";
 import Property from "../models/propertymodel.js"; // <-- Add this line
@@ -26,12 +25,6 @@ propertyrouter.get("/requests", getPendingProperties);
 propertyrouter.post(
   "/add",
   protect,
-  upload.fields([
-    { name: "image1", maxCount: 1 },
-    { name: "image2", maxCount: 1 },
-    { name: "image3", maxCount: 1 },
-    { name: "image4", maxCount: 1 },
-  ]),
   addproperty
 );
 
@@ -39,12 +32,6 @@ propertyrouter.get("/list", listproperty);
 propertyrouter.post("/remove", removeproperty);
 propertyrouter.post(
   "/update",
-  upload.fields([
-    { name: "image1", maxCount: 1 },
-    { name: "image2", maxCount: 1 },
-    { name: "image3", maxCount: 1 },
-    { name: "image4", maxCount: 1 },
-  ]),
   protect,
   updateproperty
 );

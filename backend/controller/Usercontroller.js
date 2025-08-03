@@ -1,15 +1,12 @@
-import express from "express";
-import { Router } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import validator from "validator";
 import crypto from "crypto";
 import userModel from "../models/Usermodel.js";
-import transporter from "../config/nodemailer.js";
 import { getWelcomeTemplate } from "../email.js";
 import { getPasswordResetTemplate } from "../email.js";
+import { sendEmail } from "../services/sendEmail.js";
 
 const backendurl = process.env.BACKEND_URL;
 
@@ -76,13 +73,11 @@ const register = async (req, res) => {
     const token = createtoken(newUser._id);
 
     // Send welcome email
-    const mailOptions = {
-      from: process.env.SMTP_USER,
-      to: email,
-      subject: "Welcome to BuildEstate - Your Account Has Been Created",
-      html: getWelcomeTemplate(name),
-    };
-    await transporter.sendMail(mailOptions);
+    await sendEmail({
+  to: email,
+  subject: "Welcome to BuildEstate - Your Account Has Been Created",
+  html: getWelcomeTemplate(name),
+});
 
     // Return success response
     return res.status(201).json({
@@ -119,14 +114,12 @@ const forgotpassword = async (req, res) => {
     user.resetTokenExpire = Date.now() + 10 * 60 * 1000; // 1 hour
     await user.save();
     const resetUrl = `${process.env.WEBSITE_URL}/reset/${resetToken}`;
-    const mailOptions = {
-      from: process.env.SMTP_USER,
-      to: email,
-      subject: "Password Reset - BuildEstate Security",
-      html: getPasswordResetTemplate(resetUrl),
-    };
+    await sendEmail({
+  to: email,
+  subject: "Password Reset - BuildEstate Security",
+  html: getPasswordResetTemplate(resetUrl),
+});
 
-    await transporter.sendMail(mailOptions);
     return res.status(200).json({ message: "Email sent", success: true });
   } catch (error) {
     console.error(error);
@@ -212,26 +205,24 @@ const requestAgent = async (req, res) => {
     await user.save();
 
     // Send confirmation to user
-    await transporter.sendMail({
-      from: process.env.SMTP_USER,
-      to: user.email,
-      subject: "Agent Application Received",
-      html: `<p>Your request to become an agent has been received. We will review and notify you soon.</p>`,
-    });
+    await sendEmail({
+  to: user.email,
+  subject: "Agent Application Received",
+  html: `<p>Your request to become an agent has been received. We will review and notify you soon.</p>`,
+});
 
     // Notify admin
-    await transporter.sendMail({
-      from: process.env.SMTP_USER,
-      to: process.env.ADMIN_EMAILS,
-      subject: "New Agent Request",
-      html: `<p>${user.name} (${user.email}) wants to become an agent.<br>
-      <b>Phone:</b> ${phone}<br>
-      <b>Experience:</b> ${experience}<br>
-      <b>License Number:</b> ${licenseNumber}<br>
-      <b>Agency:</b> ${agency}<br>
-      <b>Location:</b> ${location}<br>
-      <b>About:</b> ${about}</p>`,
-    });
+    await sendEmail({
+  to: process.env.ADMIN_EMAILS,
+  subject: "New Agent Request",
+  html: `<p>${user.name} (${user.email}) wants to become an agent.<br>
+  <b>Phone:</b> ${phone}<br>
+  <b>Experience:</b> ${experience}<br>
+  <b>License Number:</b> ${licenseNumber}<br>
+  <b>Agency:</b> ${agency}<br>
+  <b>Location:</b> ${location}<br>
+  <b>About:</b> ${about}</p>`,
+});
 
     res.json({ success: true, message: "Agent request submitted" });
   } catch (error) {
@@ -247,12 +238,11 @@ const requestSeller = async (req, res) => {
   await user.save();
 
   // Send admin notification (email logic here)
-  await transporter.sendMail({
-    from: process.env.EMAIL,
-    to: process.env.ADMIN_EMAIL,
-    subject: "New Seller Request",
-    html: `<p>${user.name} (${user.email}) wants to become a seller.</p>`,
-  });
+  await sendEmail({
+  to: process.env.ADMIN_EMAIL,
+  subject: "New Seller Request",
+  html: `<p>${user.name} (${user.email}) wants to become a seller.</p>`,
+});
 
   res.json({ success: true, message: "Seller request submitted" });
 };

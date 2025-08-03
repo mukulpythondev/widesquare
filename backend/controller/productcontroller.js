@@ -2,7 +2,7 @@ import fs from "fs";
 import imagekit from "../config/imagekit.js";
 import Property from "../models/propertymodel.js";
 import User from "../models/Usermodel.js";
-import transporter from "../config/nodemailer.js";
+import { sendEmail } from "../services/sendEmail.js";
 
 // Helper to parse amenities safely
 function parseAmenities(amenities) {
@@ -33,58 +33,34 @@ const addproperty = async (req, res) => {
       description,
       amenities,
       phone,
+      image // Array of Cloudinary-secure URLs
     } = req.body;
+
+    // Validate required fields
+    if (!image || !Array.isArray(image) || image.length === 0) {
+      return res.status(400).json({ success: false, message: 'At least one image URL is required' });
+    }
 
     const parsedAmenities = parseAmenities(amenities);
 
-    const image1 = req.files?.image1 && req.files.image1[0];
-    const image2 = req.files?.image2 && req.files.image2[0];
-    const image3 = req.files?.image3 && req.files.image3[0];
-    const image4 = req.files?.image4 && req.files.image4[0];
-    const images = [image1, image2, image3, image4].filter(Boolean);
-
-    // Save both url and fileId for each image
-    const imageObjs = await Promise.all(
-      images.map(async (item) => {
-        const result = await imagekit.upload({
-          file: fs.readFileSync(item.path),
-          fileName: item.originalname,
-          folder: "Property",
-        });
-        fs.unlink(item.path, (err) => {
-          if (err) console.log("Error deleting the file: ", err);
-        });
-        return { url: result.url, fileId: result.fileId };
-      })
-    );
-
+    // Determine user roles
     const user = await User.findById(req.user._id);
-    let isAgent = user.role === "agent";
-    let isAdmin = user.role === "admin";
-    let isSeller = user.role === "seller";
+    let isAgent = user.role === 'agent';
+    let isAdmin = user.role === 'admin';
+    let isSeller = user.role === 'seller';
 
     if (!isAgent && !isAdmin && !isSeller) {
-      user.role = "seller";
+      user.role = 'seller';
       await user.save();
       isSeller = true;
     }
 
-    let isApproved = false;
-    let status = "pending";
-    let approvedBy = null;
+    // Approval logic
+    let isApproved = isAdmin;
+    const status = isAdmin ? 'approved' : 'pending';
+    const approvedBy = isAdmin ? req.user._id : null;
 
-    if (isAdmin) {
-      isApproved = true;
-      status = "approved";
-      approvedBy = req.user._id;
-    } else if (isAgent) {
-      isApproved = false;
-      status = "pending";
-    } else if (isSeller) {
-      isApproved = false;
-      status = "pending";
-    }
-
+    // Prepare property data
     const propertyData = {
       title,
       location,
@@ -94,46 +70,44 @@ const addproperty = async (req, res) => {
       availability,
       description,
       amenities: parsedAmenities,
-      image: imageObjs,
+      image,
       phone,
       seller: req.user._id,
       isApproved,
       status,
       approvedBy,
     };
-    if (type !== "Plot") {
+
+    if (type !== 'Plot') {
       propertyData.beds = beds;
       propertyData.baths = baths;
     }
 
+    // Save property
     const property = new Property(propertyData);
-
     await property.save();
 
+    // Notifications
     if (isAgent || isSeller) {
-      await transporter.sendMail({
-        from: process.env.SMTP_USER,
+      await sendEmail({
         to: user.email,
-        subject: "Property Submitted for Approval",
-        html: `<p>Your property "${title}" has been sent to admin for approval.</p>`,
+        subject: 'Property Submitted for Approval',
+        html: `<p>Your property \"${title}\" has been sent to admin for approval.</p>`,
       });
-      await transporter.sendMail({
-        from: process.env.SMTP_USER,
+      await sendEmail({
         to: process.env.ADMIN_EMAILS,
-        subject: "New Property Pending Approval",
-        html: `<p>User ${user.name} (${user.email}) submitted a new property: "${title}".</p>`,
+        subject: 'New Property Pending Approval',
+        html: `<p>User ${user.name} (${user.email}) submitted a new property: \"${title}\".</p>`,
       });
     }
 
-    res.json({
-      message: isApproved
-        ? "Property added successfully"
-        : "Property submitted for approval",
+    return res.json({
+      message: isApproved ? 'Property added successfully' : 'Property submitted for approval',
       success: true,
     });
   } catch (error) {
-    console.log("Error adding product: ", error);
-    res.status(500).json({ message: "Server Error", success: false });
+    console.error('Error adding property:', error);
+    return res.status(500).json({ message: 'Server Error', success: false });
   }
 };
 
@@ -200,90 +174,25 @@ const updateproperty = async (req, res) => {
       description,
       amenities,
       phone,
+      image // Optional array of new Cloudinary URLs
     } = req.body;
 
     const parsedAmenities = parseAmenities(amenities);
-
     const property = await Property.findById(id);
+
     if (!property) {
-      return res.status(404).json({ message: "Property not found", success: false });
+      return res.status(404).json({ message: 'Property not found', success: false });
     }
 
-    if (!property.seller) {
-      return res.status(400).json({ message: "Property has no seller", success: false });
-    }
-
+    // Authorization checks
     if (!req.user) {
-      return res.status(401).json({ message: "User not authenticated", success: false });
+      return res.status(401).json({ message: 'User not authenticated', success: false });
+    }
+    if (property.seller.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Not authorized', success: false });
     }
 
-    if (
-      property.seller.toString() !== req.user._id.toString() &&
-      req.user.role !== "admin"
-    ) {
-      return res.status(403).json({ message: "Not authorized", success: false });
-    }
-
-    // If no new images are provided, update only the text fields
-    if (!req.files || Object.keys(req.files).length === 0) {
-      property.title = title;
-      property.location = location;
-      property.price = price;
-      property.sqft = sqft;
-      property.type = type;
-      property.availability = availability;
-      property.description = description;
-      property.amenities = parsedAmenities;
-      property.phone = phone;
-      if (type !== "Plot") {
-        property.beds = beds;
-        property.baths = baths;
-      } else {
-        property.beds = undefined;
-        property.baths = undefined;
-      }
-      await property.save();
-      return res.json({
-        message: "Property updated successfully",
-        success: true,
-      });
-    }
-
-    // Handle new images if provided
-    const image1 = req.files?.image1 && req.files.image1[0];
-    const image2 = req.files?.image2 && req.files.image2[0];
-    const image3 = req.files?.image3 && req.files.image3[0];
-    const image4 = req.files?.image4 && req.files.image4[0];
-    const images = [image1, image2, image3, image4].filter(Boolean);
-
-    // Delete old images from ImageKit
-    if (property.image && property.image.length > 0) {
-      for (const img of property.image) {
-        if (img.fileId) {
-          try {
-            await imagekit.deleteFile(img.fileId);
-          } catch (err) {
-            console.error("Error deleting image from ImageKit:", err.message);
-          }
-        }
-      }
-    }
-
-    // Upload new images to ImageKit and delete after upload
-    const imageObjs = await Promise.all(
-      images.map(async (item) => {
-        const result = await imagekit.upload({
-          file: fs.readFileSync(item.path),
-          fileName: item.originalname,
-          folder: "Property",
-        });
-        fs.unlink(item.path, (err) => {
-          if (err) console.log("Error deleting the file: ", err);
-        });
-        return { url: result.url, fileId: result.fileId };
-      })
-    );
-
+    // Update text fields
     property.title = title;
     property.location = location;
     property.price = price;
@@ -292,9 +201,9 @@ const updateproperty = async (req, res) => {
     property.availability = availability;
     property.description = description;
     property.amenities = parsedAmenities;
-    property.image = imageObjs;
     property.phone = phone;
-    if (type !== "Plot") {
+
+    if (type !== 'Plot') {
       property.beds = beds;
       property.baths = baths;
     } else {
@@ -302,14 +211,19 @@ const updateproperty = async (req, res) => {
       property.baths = undefined;
     }
 
+    // Replace images if new URLs provided
+    if (image && Array.isArray(image) && image.length > 0) {
+      property.image = image;
+    }
+
     await property.save();
-    res.json({ message: "Property updated successfully", success: true });
+
+    return res.json({ message: 'Property updated successfully', success: true });
   } catch (error) {
-    console.log("Error updating product: ", error);
-    res.status(500).json({ message: "Server Error", success: false });
+    console.error('Error updating property:', error);
+    return res.status(500).json({ message: 'Server Error', success: false });
   }
 };
-
 const singleproperty = async (req, res) => {
   try {
     const { id } = req.params;
