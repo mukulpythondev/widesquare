@@ -551,7 +551,7 @@ export const getUpcomingAppointments = async (req, res) => {
 
 export const guestEnquiry = async (req, res) => {
   try {
-    const { propertyId, name, email, phone } = req.body;
+    const { propertyId, name, email, phone, notes } = req.body;
 
     // Find property and agent
     const property = await Property.findById(propertyId).populate("assignedAgent");
@@ -566,22 +566,29 @@ export const guestEnquiry = async (req, res) => {
       propertyId,
       status: "enquiry",
       guest: { name, email, phone },
+      notes, // optional, include it in model if defined
     });
     await appointment.save();
+
+    // Prepare current date & time
+    const now = new Date();
+    const date = now.toLocaleDateString(); // e.g. 08/05/2025
+    const time = now.toLocaleTimeString(); // e.g. 12:34:56 PM
 
     // Email notification
     const adminEmail = process.env.ADMIN_EMAILS;
     const agentEmail = property.assignedAgent?.email;
     const mailTo = [adminEmail, agentEmail].filter(Boolean).join(",");
+
     await sendEmail({
-  to: mailTo,
-  subject: "New Property Enquiry",
-  text: `New enquiry for property: ${property.title}
+      to: mailTo,
+      subject: "New Property Enquiry",
+      text: `New enquiry for property: ${property.title}
 Date: ${date}
 Time: ${time}
+Guest: ${name} (${email}, ${phone})
 Notes: ${notes || "None"}`,
-});
-
+    });
 
     res.status(201).json({
       success: true,
