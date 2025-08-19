@@ -211,10 +211,10 @@ const PropertyCard = ({ property, viewType }) => {
               <MapPin className="w-4 h-4 mr-2 text-black" />
               {property.location}
             </div>
-            <div className="flex items-center gap-1 text-black text-sm">
+            {/* <div className="flex items-center gap-1 text-black text-sm">
               <Eye className="w-4 h-4 text-black" />
               <span>{Math.floor(Math.random() * 100) + 20}</span>
-            </div>
+            </div> */}
           </div>
 
           <h3 className="text-xl font-semibold text-black line-clamp-2 

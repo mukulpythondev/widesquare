@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Star, ArrowLeft, ArrowRight, Quote } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { testimonials } from '../assets/testimonialdata';
-
+import DefaultUser from '../assets/images/default.webp'
 const TestimonialCard = ({ testimonial, index, activeIndex, direction }) => {
   return (
     <motion.div
@@ -27,7 +27,7 @@ const TestimonialCard = ({ testimonial, index, activeIndex, direction }) => {
         {/* Profile image */}
         <div className="relative">
           <img
-            src={testimonial.image}
+            src={testimonial.image  ? testimonial.image : DefaultUser}
             alt={testimonial.name}
             className="w-16 h-16 rounded-full object-cover border-2 border-primary/20"
             loading="lazy"
@@ -147,7 +147,7 @@ const Testimonials = () => {
                 <div className="mt-8 flex items-center">
                   <div className="relative">
                     <img
-                      src={testimonial.image}
+                      src={testimonial.image ? testimonial.image : DefaultUser}
                       alt={testimonial.name}
                       className="w-16 h-16 rounded-full object-cover border-2 border-primary/20"
                     />

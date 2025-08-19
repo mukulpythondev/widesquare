@@ -150,9 +150,9 @@ export default function HowItWorks() {
         >
           <div className="bg-card p-8 rounded-xl shadow-xl border border-border text-center">
             <p className="text-muted-foreground italic text-lg mb-4">
-              {`"The 3-step process was incredibly smooth. Within a week, I found and secured my dream apartment!"`}
+I recently purchased a plot in Bihta, and the entire experience was smooth and hassle-free. The team guided me at every step, from site visit to registration. I’m truly happy with the transparency and professionalism shown throughout the process.
             </p>
-            <p className="font-bold text-foreground">Sarah Johnson, New York</p>
+            <p className="font-bold text-foreground">Ravi Yadav, Bihta</p>
             <div className="flex justify-center mt-2">
               {[...Array(5)].map((_, i) => (
                 <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 24 24">
