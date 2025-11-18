@@ -52,7 +52,7 @@ export const getSchedulingEmailTemplate = (appointment, date, time, notes) => `
         <p style="margin: 0; color: #4b5563;">
           Our support team is available 24/7 to assist you:
           <br>
-          📧 <a href="mailto:support@Widesquare.com" style="color: #2563eb; text-decoration: none;">support@Widesquare.com</a>
+          📧 <a href="mailto:contact@widesquare.in" style="color: #2563eb; text-decoration: none;">contact@widesquare.in</a>
           <br>
           📞 <a href="tel:+1234567890" style="color: #2563eb; text-decoration: none;">+1 (234) 567-890</a>
         </p>
@@ -143,7 +143,7 @@ export const getEmailTemplate = (appointment, status) => `
         <p style="margin: 0; color: #4b5563;">
           Our support team is available 24/7 to assist you:
           <br>
-          📧 <a href="mailto:support@Widesquare.com" style="color: #2563eb; text-decoration: none;">support@Widesquare.com</a>
+          📧 <a href="mailto:contact@widesquare.in" style="color: #2563eb; text-decoration: none;">contact@widesquare.in</a>
           <br>
           📞 <a href="tel:+1234567890" style="color: #2563eb; text-decoration: none;">+1 (234) 567-890</a>
         </p>
@@ -217,7 +217,7 @@ export const getNewsletterTemplate = (email) => `
     <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin-top: 30px;">
       <p style="margin: 0; color: #4b5563; font-size: 14px;">
         <strong style="color: #1e40af;">📝 Note:</strong> To ensure you don't miss our updates, please add
-        <a href="mailto:support@Widesquare.com" style="color: #2563eb; text-decoration: none;">support@Widesquare.com</a>
+        <a href="mailto:contact@widesquare.in" style="color: #2563eb; text-decoration: none;">contact@widesquare.in</a>
         to your contacts.
       </p>
     </div>
@@ -301,7 +301,7 @@ export const getWelcomeTemplate = (name) => `
       <p style="margin: 0; color: #4b5563;">
         Our support team is available 24/7:
         <br>
-        📧 <a href="mailto:support@Widesquare.com" style="color: #2563eb; text-decoration: none;">support@Widesquare.com</a>
+        📧 <a href="mailto:contact@widesquare.in" style="color: #2563eb; text-decoration: none;">contact@widesquare.in</a>
         <br>
         📞 <a href="tel:+917250641818" style="color: #2563eb; text-decoration: none;">+91 7250641818</a>
       </p>
