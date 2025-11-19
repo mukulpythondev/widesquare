@@ -18,7 +18,15 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+          # Add VPS host key (IPv4 only)
+          ssh-keyscan -4 -t rsa,ecdsa,ed25519 ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+          # Convert hashed entries to plain for reliable SSH matching
+          sed -i 's/|1|.* ssh/ssh/' ~/.ssh/known_hosts
+
+          # Debug known hosts
+          cat ~/.ssh/known_hosts
 
       - name: Deploy to VPS
         run: |
