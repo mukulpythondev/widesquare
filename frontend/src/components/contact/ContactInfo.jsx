@@ -13,8 +13,8 @@ const contactInfo = [
   {
     icon: Mail,
     title: 'Email',
-    content: 'support@Widesquare.com',
-    link: 'mailto:support@Widesquare.com',
+    content: 'contact@widesquare.in',
+    link: 'mailto:contact@widesquare.in',
   },
   {
     icon: MapPin,

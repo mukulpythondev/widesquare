@@ -156,13 +156,13 @@ const contactInfo = [
   },
   { 
     icon: Phone, 
-    text: '+91 70613 21898',
+    text: '+91 70613 21898 , +91 9142713278',
     href: 'tel:+7061321898'
   },
   { 
     icon: Mail, 
-    text: 'support@Widesquare.com',
-    href: 'mailto:support@Widesquare.com' 
+    text: 'contact@widesquare.in',
+    href: 'mailto:contact@widesquare.in' 
   },
 ];
 
