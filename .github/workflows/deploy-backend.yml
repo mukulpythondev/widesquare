@@ -22,15 +22,15 @@ jobs:
           # Add VPS host key (IPv4 only)
           ssh-keyscan -4 -t rsa,ecdsa,ed25519 ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
-          # Convert hashed entries to plain for reliable SSH matching
+          # FIX: Convert hashed host key entries into plain entries
           sed -i 's/|1|.* ssh/ssh/' ~/.ssh/known_hosts
 
-          # Debug known hosts
+          echo "---- Known Hosts Debug ----"
           cat ~/.ssh/known_hosts
 
       - name: Deploy to VPS
         run: |
-          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=yes ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
             cd ${{ secrets.BACKEND_DIR }}
             git pull origin main
             npm install
