@@ -41,6 +41,7 @@ const Navbar = () => {
     { path: '/admin/appointments', label: 'Enquery', icon: Calendar },
     { path: '/admin/agent-requests', label: 'Agent Requests', icon: UsersIcon },
     { path: '/admin/add-services', label: 'Add Services', icon: PlusSquare },
+    { path: '/admin/blogs', label: 'Blogs', icon: Database },
   ];
 
   return (

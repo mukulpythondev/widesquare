@@ -289,11 +289,14 @@ const Navbar = () => {
 
 const NavLinks = ({ currentPath, user }) => {
   const navLinks = [
-    { name: "Home", path: "/", icon: Home },
-    { name: "Properties", path: "/properties", icon: Search },
-    { name: "EMI Calculator", path: "/emi-calculator", icon: Calculator },
-    { name: "Services", path: "/services", icon: Users },
-  ];
+  { name: "Home", path: "/", icon: Home },
+  { name: "Properties", path: "/properties", icon: Search },
+  { name: "Blog", path: "/blogs", icon: MessageCircle },
+  { name: "About Us", path: "/about", icon: Users },
+  { name: "Contact", path: "/contact", icon: MessageCircle },
+  { name: "EMI Calculator", path: "/emi-calculator", icon: Calculator },
+];
+
 
   // Special animation for sparkles (for AI Property Hub if you want to use it)
   const [sparkleKey, setSparkleKey] = useState(0);
@@ -359,12 +362,14 @@ const MobileNavLinks = ({
   currentPath,
 }) => {
   const navLinks = [
-    { name: "Home", path: "/", icon: Home },
-    { name: "Properties", path: "/properties", icon: Search },
-    { name: "About Us", path: "/about", icon: Users },
-    { name: "Contact", path: "/contact", icon: MessageCircle },
-    { name: "EMI Calculator", path: "/emi-calculator", icon: Calculator },
-  ];
+  { name: "Home", path: "/", icon: Home },
+  { name: "Properties", path: "/properties", icon: Search },
+  { name: "Blog", path: "/blogs", icon: MessageCircle },
+  { name: "About Us", path: "/about", icon: Users },
+  { name: "Contact", path: "/contact", icon: MessageCircle },
+  { name: "EMI Calculator", path: "/emi-calculator", icon: Calculator },
+];
+
 
   const [showOpportunities, setShowOpportunities] = useState(false);
   const showOpportunitiesDropdown = !user || (user.role !== "admin" && user.role !== "agent" && user.role !== "seller");

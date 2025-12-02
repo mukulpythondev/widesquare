@@ -16,7 +16,8 @@ import propertyRoutes from './routes/propertyRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
 import morgan from 'morgan';
 import { getSignedUrl } from './controller/cloudinaryController.js';
-
+import blogRoutes from "./routes/blogRoute.js";
+import adminBlogRoutes from "./routes/adminBlogRoute.js";
 dotenv.config();
 
 const app = express();
@@ -77,6 +78,8 @@ app.use('/api/admin', adminRouter);
 app.use('/api', propertyRoutes);
 app.use("/api/services", serviceRoutes);
 app.get('/api/signedUrl/:userId?', getSignedUrl)
+app.use("/api/blogs", blogRoutes);
+app.use("/api/admin", adminBlogRoutes);
 
 
 app.use((err, req, res, next) => {

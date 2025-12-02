@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import  { useEffect, useState, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,7 +10,6 @@ import {
   Phone,
   Calendar,
   MapPin,
-  Loader,
   Building,
   Share2,
   ChevronLeft,
@@ -370,6 +369,53 @@ const PropertyDetails = () => {
                   Property Enquiry
                 </button>
               </div>
+{/* Social Media / Video Link */}
+{property.socialMediaLink && (
+  <div className="mb-6">
+    <h2 className="text-xl font-semibold mb-4 text-black">Property Video / Social Link</h2>
+
+    {/* Auto-embed YouTube */}
+    {property.socialMediaLink.includes("youtube.com") ||
+    property.socialMediaLink.includes("youtu.be") ? (
+      <div className="w-full aspect-video rounded-xl overflow-hidden mb-3">
+        <iframe
+          src={
+            property.socialMediaLink.includes("watch?v=")
+              ? property.socialMediaLink.replace("watch?v=", "embed/")
+              : property.socialMediaLink.replace("youtu.be/", "youtube.com/embed/")
+          }
+          title="Property Video"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="w-full h-full"
+        />
+      </div>
+    ) : null}
+
+    {/* Instagram Reel */}
+    {property.socialMediaLink.includes("instagram.com") ? (
+      <div className="mb-3">
+        <blockquote 
+          className="instagram-media"
+          data-instgrm-permalink={property.socialMediaLink}
+          data-instgrm-version="14"
+        ></blockquote>
+        <script async src="//www.instagram.com/embed.js"></script>
+      </div>
+    ) : null}
+
+    {/* Generic Link Button */}
+    <a
+      href={property.socialMediaLink}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition-colors"
+    >
+      <Share2 className="w-4 h-4" />
+      View Property Video / Link
+    </a>
+  </div>
+)}
 
               <div>
                 <div className="mb-6">

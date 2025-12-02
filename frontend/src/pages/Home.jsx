@@ -5,7 +5,7 @@ import Features from '../components/Features'
 import Properties from '../components/propertiesshow'
 import Steps from '../components/Steps'
 import Testimonials from '../components/testimonial'
-import Blog from '../components/Blog'
+import LatestBlogs from '../components/LatestBlogs'
 
 const Home = () => {
   return (
@@ -16,7 +16,7 @@ const Home = () => {
       <Features />
       <Steps />
       <Testimonials />
-      <Blog />
+      <LatestBlogs />
     </div>
   )
 }

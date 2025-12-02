@@ -10,6 +10,7 @@ const propertySchema = new mongoose.Schema(
     ],
     beds: { type: Number },
     baths: { type: Number },
+    socialMediaLink: { type: String, default: "" },
     sqft: { type: Number, required: true },
     type: { type: String, required: true },
     availability: { type: String, required: true },

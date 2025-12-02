@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
 import { backendurl } from "../../config";
@@ -22,6 +22,7 @@ const PropertyForm = () => {
     phone:'',
     availability:'',
     amenities:[],
+    socialMediaLink: "",
     imageUrls:[] // Keep this as imageUrls for frontend consistency
   });
 
@@ -168,6 +169,7 @@ const PropertyForm = () => {
         phone: formData.phone,
         availability: formData.availability,
         amenities: formData.amenities,
+          socialMediaLink: formData.socialMediaLink || "",   // ⭐ NEW FIELD
         image: formData.imageUrls // Map imageUrls to image field for backend
       };
       
@@ -188,7 +190,7 @@ const PropertyForm = () => {
         setFormData({ 
           title:'',type:'',price:'',location:'',description:'',
           beds:'',baths:'',sqft:'',phone:'',availability:'',
-          amenities:[],imageUrls:[] 
+          amenities:[],imageUrls:[] , socialMediaLink: ""
         });
         setPreviewUrls([]);
       } else {
@@ -407,6 +409,23 @@ const PropertyForm = () => {
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
             </div>
+            <div>
+  <label htmlFor="socialMediaLink" className="block text-sm font-medium text-gray-700">
+    Social Media / Video Link
+  </label>
+  <input
+    type="text"
+    id="socialMediaLink"
+    name="socialMediaLink"
+    placeholder="https://youtube.com/... or Instagram reel link"
+    value={formData.socialMediaLink}
+    onChange={handleInputChange}
+    disabled={isDisabled}
+    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 
+               shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+  />
+</div>
+
           </div>
 
           {/* Amenities */}

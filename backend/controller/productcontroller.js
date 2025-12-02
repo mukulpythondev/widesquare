@@ -33,6 +33,7 @@ const addproperty = async (req, res) => {
       description,
       amenities,
       phone,
+      socialMediaLink,
       image // Array of Cloudinary-secure URLs
     } = req.body;
 
@@ -76,6 +77,7 @@ const addproperty = async (req, res) => {
       isApproved,
       status,
       approvedBy,
+      socialMediaLink
     };
 
     if (type !== 'Plot') {
@@ -173,6 +175,7 @@ const updateproperty = async (req, res) => {
       availability,
       description,
       amenities,
+      socialMediaLink,
       phone,
       image // Optional array of new Cloudinary URLs
     } = req.body;
@@ -202,7 +205,9 @@ const updateproperty = async (req, res) => {
     property.description = description;
     property.amenities = parsedAmenities;
     property.phone = phone;
-
+    if (socialMediaLink !== undefined) {
+  property.socialMediaLink = socialMediaLink;
+}
     if (type !== 'Plot') {
       property.beds = beds;
       property.baths = baths;

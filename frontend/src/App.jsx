@@ -48,8 +48,12 @@ import AllAgents from "./pages/admin/AllAgents";
 import Services from "./pages/admin/Services";
 import ServiceEnquiries from "./pages/admin/ServiceEnquiries";
 import HomeServices from "./pages/HomeServices";
-
-
+import AdminBlogs from "./pages/admin/AdminBlogs";
+import AdminBlogAdd from "./pages/admin/AdminBlogAdd";
+import AdminBlogEdit from "./pages/admin/AdminBlogEdit";
+import AdminBlogComments from "./pages/admin/AdminBlogComments";
+import BlogList from "./pages/BlogList";
+import BlogSingle from "./pages/BlogSingle";
 // Page transition variants
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -106,7 +110,8 @@ const App = () => (
               </Route>
 
               <Route path="/agent-panel/add" element={<AgentAdd />} />
-
+               <Route path="/blogs" element={<BlogList />} />
+              <Route path="/blogs/:slug" element={<BlogSingle />} />
               {/* Admin panel routes */}
               <Route path="/admin" element={<AdminProtectedRoute />}>
                 <Route element={<AdminNavbar />}>
@@ -125,6 +130,10 @@ const App = () => (
                   <Route path="/admin/assigned-properties" element={<AssignedProperties />} />
                   <Route path="/admin/add-services" element={<Services />} />
                   <Route path="/admin/service-enquery" element={<ServiceEnquiries />} />
+                  <Route path="/admin/blogs" element={<AdminBlogs />} />
+                  <Route path="/admin/blogs/add" element={<AdminBlogAdd />} />
+                  <Route path="/admin/blogs/edit/:id" element={<AdminBlogEdit />} />
+                  <Route path="/admin/blogs/:id/comments" element={<AdminBlogComments />} />
                 </Route>
               </Route>
 
