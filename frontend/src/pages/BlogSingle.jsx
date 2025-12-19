@@ -3,11 +3,12 @@ import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import { Share2, Calendar, User, Send } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { motion} from 'framer-motion';
 
 const BlogSingle = () => {
   const { slug } = useParams();
   const { isLoggedIn, user } = useAuth();
-
+  
   const [blog, setBlog] = useState(null);
   const [comments, setComments] = useState([]);
   const [properties, setProperties] = useState([]);
@@ -27,7 +28,23 @@ const BlogSingle = () => {
       console.error(error);
     }
   };
-
+const handleShare = async (e) => {
+    e.stopPropagation();
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: blog.title,
+          text: `Check out this property: ${blog.title}`,
+          url: window.location.href
+        });
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Link copied to clipboard!');
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
   const fetchComments = async () => {
     if (!blog?._id) return;
 
@@ -88,7 +105,7 @@ const BlogSingle = () => {
             {blog.title}
           </h1>
 
-          <div className="flex items-center gap-6 text-muted-foreground mb-6">
+          <div className="flex relative items-center gap-6 text-muted-foreground mb-6">
             <span className="flex items-center gap-2">
               <Calendar size={16} />
               {new Date(blog.createdAt).toLocaleDateString()}
@@ -96,7 +113,11 @@ const BlogSingle = () => {
             <span className="flex items-center gap-2">
               <User size={16} /> {blog.authorName}
             </span>
-            <Share2 className="cursor-pointer hover:text-primary" />
+          <div
+            onClick={handleShare}
+          >
+            <Share2 className="w-5 h-5 text-black" />
+        </div>
           </div>
 
           {/* CONTENT */}
@@ -124,9 +145,9 @@ const BlogSingle = () => {
     </button>
   </div>
 ) : (
-  <p className="text-sm text-muted-foreground">
+  <a href="/login" className="text-lg text-blue-800">
     Login to comment.
-  </p>
+  </a>
 )}
 
 

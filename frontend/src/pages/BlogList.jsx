@@ -49,7 +49,7 @@ const BlogList = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <h1 className="text-4xl font-bold text-foreground text-center mb-10">
-          Blog Articles
+          Property News
         </h1>
 
         {/* Search & Filter */}

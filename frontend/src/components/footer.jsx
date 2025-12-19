@@ -10,11 +10,13 @@ import {
   Phone,
   ChevronRight,
   ArrowRight,
-  ChevronDown
+  ChevronDown,
+  Youtube
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FaWhatsapp } from 'react-icons/fa';
 
 // Mobile Collapsible Footer Section
 const MobileFooterSection = ({ title, children }) => {
@@ -86,10 +88,11 @@ const FooterLink = ({ href, children }) => {
 
 // Social Links Component
 const socialLinks = [
-  { icon: Twitter, href: '#', label: 'Twitter', color: 'bg-foreground', hoverColor: 'hover:bg-primary' },
-  { icon: Facebook, href: '#', label: 'Facebook', color: 'bg-foreground', hoverColor: 'hover:bg-primary' },
-  { icon: Instagram, href: '#', label: 'Instagram', color: 'bg-foreground', hoverColor: 'hover:bg-primary' },
-  { icon: Github, href: 'https://github.com/AAYUSH412/Real-Estate-Website', label: 'GitHub', color: 'bg-foreground', hoverColor: 'hover:bg-primary' },
+  // { icon: Twitter, href: '#', label: 'Twitter', color: 'bg-foreground', hoverColor: 'hover:bg-primary' },
+  // { icon: Facebook, href: '#', label: 'Facebook', color: 'bg-foreground', hoverColor: 'hover:bg-primary' },
+  // { icon: Instagram, href: '#', label: 'Instagram', color: 'bg-foreground', hoverColor: 'hover:bg-primary' },
+  { icon:FaWhatsapp, href: 'https://wa.me/message/CIF74QVIME2FF1', label: 'WhatsApp', color: 'bg-foreground', hoverColor: 'hover:bg-primary' },
+  { icon: Youtube, href: 'https://www.youtube.com/@widesquareproperties', label: 'YouTube', color: 'bg-foreground', hoverColor: 'hover:bg-primary' },
 ];
 
 const SocialLinks = () => {
@@ -104,7 +107,7 @@ const SocialLinks = () => {
           title={label}
           target="_blank"
           rel="noopener noreferrer"
-          className={`flex items-center justify-center text-background ${color} ${hoverColor} rounded-full w-9 h-9 shadow-sm transition-all duration-200`}
+          className={`flex items-center justify-center text-background ${color} ${hoverColor} rounded-full w-10 h-10 shadow-sm transition-all duration-200`}
         >
           <Icon className="w-4 h-4" />
         </motion.a>
@@ -151,13 +154,13 @@ const helpLinks = [
 const contactInfo = [
   { 
     icon: MapPin, 
-    text: '4th floor, Bhardwaj bhawan, jakariyapur, Patna.',
+    text: 'Patna India',
     href: 'https://maps.google.com/?q=4th+floor,+Bhardwaj+bhawan,+jakariyapur,+Patna' 
   },
   { 
     icon: Phone, 
-    text: '+91 70613 21898 , +91 9142713278',
-    href: 'tel:+7061321898'
+    text: ' +91 9142713278',
+    href: 'tel:+9142713278'
   },
   { 
     icon: Mail, 
